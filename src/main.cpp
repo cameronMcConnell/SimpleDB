@@ -15,8 +15,19 @@ int main(int argc, char *argv[]) {
     if (socketFlag) {
         SocketInputHandler inputHandler = SocketInputHandler(portNumber);
 
+        try {
+            inputHandler.openSocket();
+        }
+        catch (const char *message) {
+            std::cerr << message << '\n';
+            return 1;
+        }
+
         while (1) {
             std::string command = inputHandler.getInput();
+            if (command == "") {
+                continue;
+            }
 
             if (command == "QUIT"){
                 std::cout << "QUITTING PROGRAM\n";

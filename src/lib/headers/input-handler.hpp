@@ -19,6 +19,7 @@ class UserInputHandler : public InputHandler {
 
 class SocketInputHandler : public InputHandler{
     private:
+        int portNumber;
         int serverSocket;
         int clientSocket;
 
@@ -26,6 +27,7 @@ class SocketInputHandler : public InputHandler{
         SocketInputHandler(int portNumber);
         std::string getInput();
         void closeSocket();
+        void openSocket();
 };
 
 #endif

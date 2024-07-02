@@ -7,8 +7,29 @@ std::string UserInputHandler::getInput() {
 }
 
 SocketInputHandler::SocketInputHandler(int portNumber) {
+    this->portNumber = portNumber;
+}
+
+std::string SocketInputHandler::getInput() {
+    char buffer[200];
+    
+    ssize_t bytesReceived = recv(clientSocket, buffer, sizeof(buffer), 0);
+    if (bytesReceived == -1) {
+        std::cerr << "ERROR RECEIVING DATA FROM CLIENT\n";
+        return "";
+    }
+    
+    buffer[bytesReceived] = '\0';
+
+    return std::string(buffer);
+}
+
+void SocketInputHandler::openSocket() {
     // Create socket
     this->serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+    if (this->serverSocket == -1){
+        throw "ERROR CREATING SOCKET";
+    }
 
     // Create address
     sockaddr_in serverAddress;
@@ -17,21 +38,20 @@ SocketInputHandler::SocketInputHandler(int portNumber) {
     serverAddress.sin_addr.s_addr = INADDR_ANY;
 
     // Bind the socket
-    bind(serverSocket, (struct sockaddr*)&serverAddress, sizeof(serverAddress));
+    if (bind(serverSocket, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) == -1) {
+        throw "ERROR BINDING SOCKET";
+    }
 
     // Listen on the socket
-    listen(this->serverSocket, 5);
+    if (listen(this->serverSocket, 5) == -1) {
+        throw "ERROR LISTENING ON SOCKET";
+    }
 
     // Accept only one client connection
     this->clientSocket = accept(this->serverSocket, nullptr, nullptr);
-}
-
-std::string SocketInputHandler::getInput() {
-    char buffer[200];
-    ssize_t bytesReceived = recv(clientSocket, buffer, sizeof(buffer), 0);
-    buffer[bytesReceived] = '\0';
-
-    return std::string(buffer);
+    if (this->clientSocket == -1) {
+        throw "ERROR ACCEPTING CLIENT CONNECTION";
+    }
 }
 
 void SocketInputHandler::closeSocket() {
