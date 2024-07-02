@@ -2,7 +2,7 @@
 
 std::string UserInputHandler::getInput() {
     std::string input;
-    std::cin >> input;
+    std::getline(std::cin, input);
     return input;
 }
 
@@ -15,11 +15,13 @@ std::string SocketInputHandler::getInput() {
     
     ssize_t bytesReceived = recv(clientSocket, buffer, sizeof(buffer), 0);
     if (bytesReceived == -1) {
-        std::cerr << "ERROR RECEIVING DATA FROM CLIENT\n";
+        std::cerr << "ERROR RECEIVING DATA FROM CLIENT" << std::endl;
         return "";
     }
     
     buffer[bytesReceived] = '\0';
+
+    std::cout << "MESSAGE RECEIVED FROM CLIENT: " << buffer << std::endl;
 
     return std::string(buffer);
 }
@@ -52,6 +54,8 @@ void SocketInputHandler::openSocket() {
     if (this->clientSocket == -1) {
         throw "ERROR ACCEPTING CLIENT CONNECTION";
     }
+
+    std::cout << "SOCKET ACCEPTING MESSAGES ON PORT: " << portNumber << std::endl;
 }
 
 void SocketInputHandler::closeSocket() {

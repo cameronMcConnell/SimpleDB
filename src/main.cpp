@@ -2,6 +2,32 @@
 #include "lib/headers/command-parser.hpp"
 #include <string.h>
 
+int parseArgs(int argc, char* argv[], int &portNumber, bool &socketFlag) {
+    if (argc > 3) {
+        std::cerr << "SYNTAX ERROR; TOO MANY ARGUEMENTS; SCHEMA IS SimpleDB -p <port_number> || SimpleDB\n";
+        return 1;
+    }
+
+    if (argc == 1) {
+        socketFlag = false;
+    }
+    else if (argc == 3) {
+        if (strcmp(argv[1], "-p") != 0) {
+            std::cerr << "SYNTAX ERROR; SCHEMA IS SimpleDB -p <port_number> || SimpleDB\n";
+            return 1;
+        }
+
+        portNumber = std::stoi(argv[2]);
+        socketFlag = true;
+    }
+    else {
+        std::cerr << "SYNTAX ERROR; SCHEMA IS SimpleDB -p <port_number> || SimpleDB\n";
+        return 1;
+    }
+
+    return 0;
+}
+
 int main(int argc, char *argv[]) {
     int portNumber;
     bool socketFlag;
@@ -9,6 +35,10 @@ int main(int argc, char *argv[]) {
     if (parseArgs(argc, argv, portNumber, socketFlag) == 1) {
         return 1;
     }
+
+    std::cout << "+-------------------------+\n";
+    std::cout << "| SimpleDB | VERSION: 1.0 |\n";
+    std::cout << "+-------------------------+" << std::endl;
 
     CommandParser commandParser = CommandParser();
 
@@ -42,6 +72,7 @@ int main(int argc, char *argv[]) {
         UserInputHandler inputHandler;
         
         while (1) {
+            std::cout << "INPUT-> ";
             std::string command = inputHandler.getInput();
 
             if (command == "QUIT") {
@@ -52,30 +83,4 @@ int main(int argc, char *argv[]) {
             commandParser.parseCommand(command);
         }
     }
-}
-
-int parseArgs(int argc, char* argv[], int &portNumber, bool &socketFlag) {
-    if (argc > 3) {
-        std::cerr << "SYNTAX ERROR; TOO MANY ARGUEMENTS; SCHEMA IS SimpleDB -p <port_number> || SimpleDB\n";
-        return 1;
-    }
-
-    if (argc == 1) {
-        socketFlag = false;
-    }
-    else if (argc == 3) {
-        if (strcmp(argv[1], "-p") != 0) {
-            std::cerr << "SYNTAX ERROR; SCHEMA IS SimpleDB -p <port_number> || SimpleDB\n";
-            return 1;
-        }
-
-        portNumber = std::stoi(argv[2]);
-        socketFlag = true;
-    }
-    else {
-        std::cerr << "SYNTAX ERROR; SCHEMA IS SimpleDB -p <port_number> || SimpleDB\n";
-        return 1;
-    }
-
-    return 0;
 }

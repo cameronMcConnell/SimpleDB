@@ -1,7 +1,7 @@
 #ifndef COMMAND_PARSER
 #define COMMAND_PARSER
 
-#include "execution-handler.hpp";
+#include "execution-handler.hpp"
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -10,8 +10,7 @@
 class CommandParser {
     private:
         ExecutionHandler executionHandler;
-        void parseCreate(std::string command);
-        void parseDrop(std::string command);
+        std::string trim(std::string command);
         void parseSelect(std::string command);
         void parseInsert(std::string command);
         void parseDelete(std::string command);
