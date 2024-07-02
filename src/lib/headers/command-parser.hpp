@@ -16,7 +16,7 @@ class CommandParser {
         void parseInsert(std::string command);
         void parseDelete(std::string command);
         void parseUpdate(std::string command);
-
+        
     public:
         CommandParser();
         void parseCommand(std::string command);
