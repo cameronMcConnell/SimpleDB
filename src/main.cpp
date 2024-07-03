@@ -4,7 +4,7 @@
 
 int parseArgs(int argc, char* argv[], int &portNumber, bool &socketFlag) {
     if (argc > 3) {
-        std::cerr << "SYNTAX ERROR; TOO MANY ARGUEMENTS; SCHEMA IS SimpleDB -p <port_number> || SimpleDB\n";
+        std::cerr << "SYNTAX ERROR; TOO MANY ARGUEMENTS; SCHEMA IS SimpleDB -p <port_number> || SimpleDB;\n";
         return 1;
     }
 
@@ -13,7 +13,7 @@ int parseArgs(int argc, char* argv[], int &portNumber, bool &socketFlag) {
     }
     else if (argc == 3) {
         if (strcmp(argv[1], "-p") != 0) {
-            std::cerr << "SYNTAX ERROR; SCHEMA IS SimpleDB -p <port_number> || SimpleDB\n";
+            std::cerr << "SYNTAX ERROR; SCHEMA IS SimpleDB -p <port_number> || SimpleDB;\n";
             return 1;
         }
 
@@ -21,7 +21,7 @@ int parseArgs(int argc, char* argv[], int &portNumber, bool &socketFlag) {
         socketFlag = true;
     }
     else {
-        std::cerr << "SYNTAX ERROR; SCHEMA IS SimpleDB -p <port_number> || SimpleDB\n";
+        std::cerr << "SYNTAX ERROR; SCHEMA IS SimpleDB -p <port_number> || SimpleDB;\n";
         return 1;
     }
 
@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
             }
 
             if (command == "QUIT"){
-                std::cout << "QUITTING PROGRAM\n";
+                std::cout << "QUITTING PROGRAM;\n";
                 inputHandler.closeSocket();
                 return 0;
             }
@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
             std::string command = inputHandler.getInput();
 
             if (command == "QUIT") {
-                std::cout << "QUITTING PROGRAM\n";
+                std::cout << "QUITTING PROGRAM;\n";
                 return 0;
             }
 
