@@ -152,7 +152,14 @@ void CommandParser::parseInsert(std::vector<std::string> tokens) {
         }
 
         std::string columnName = token.substr(0, index);
+        if (columnName == "") {
+            throw "SYNTAX ERROR; COLUMN NAMES MUST NOT BE EMPTY STRINGS;";
+        }
+
         std::string value = token.substr(index + 1, token.length());
+        if (value == "") {
+            throw "SYNTAX ERROR; COLUMN VALUES MUST NOT BE EMPTY STRINGS;";
+        }
 
         columnValues[columnName] = value;
     }
