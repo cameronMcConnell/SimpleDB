@@ -40,7 +40,8 @@ int main(int argc, char *argv[]) {
     std::cout << "| SimpleDB | VERSION: 1.0 |\n";
     std::cout << "+-------------------------+" << std::endl;
 
-    CommandParser commandParser = CommandParser();
+    std::string activeTable = "root";
+    CommandParser commandParser = CommandParser(activeTable);
 
     if (socketFlag) {
         SocketInputHandler inputHandler = SocketInputHandler(portNumber);
@@ -72,7 +73,7 @@ int main(int argc, char *argv[]) {
         UserInputHandler inputHandler;
         
         while (1) {
-            std::cout << "INPUT-> ";
+            std::cout << commandParser.activeTable + "-> ";
             std::string command = inputHandler.getInput();
 
             if (command == "QUIT") {

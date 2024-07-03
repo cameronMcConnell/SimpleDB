@@ -11,3 +11,7 @@ void ExecutionHandler::create(std::string tableName, std::vector<std::string> he
 void ExecutionHandler::drop(std::string tableName) {
 
 }
+
+void ExecutionHandler::use(std::string tableName) {
+
+}

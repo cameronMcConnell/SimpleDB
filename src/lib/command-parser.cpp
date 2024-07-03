@@ -1,7 +1,8 @@
 #include "headers/command-parser.hpp"
 
-CommandParser::CommandParser() {
+CommandParser::CommandParser(std::string activeTable) {
     executionHandler = ExecutionHandler();
+    this->activeTable = activeTable;
 }
 
 std::vector<std::string> CommandParser::tokenize(std::string command) {
@@ -42,6 +43,15 @@ void CommandParser::parseCommand(std::string command) {
         try {
             checkForValidSize(tokens, 2);
             parseDrop(tokens);
+        }
+        catch (const char *message) {
+            std::cout << message << std::endl;
+        }
+    }
+    else if (tokens[0] == "USE") {
+        try {
+            checkForValidSize(tokens, 2);
+            parseUse(tokens);
         }
         catch (const char *message) {
             std::cout << message << std::endl;
@@ -98,7 +108,13 @@ void CommandParser::parseDrop(std::vector<std::string> tokens) {
 }
 
 void CommandParser::parseUse(std::vector<std::string> tokens) {
+    std::string tableName = tokens[1];
 
+    executionHandler.use(tableName);
+
+    this->activeTable = tableName;
+
+    std::cout << "SUCCESS IN USING TABLE: " << tableName << ";" << std::endl;
 }
 
 void CommandParser::parseSelect(std::vector<std::string> tokens) {
