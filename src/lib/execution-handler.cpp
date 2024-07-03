@@ -15,3 +15,7 @@ void ExecutionHandler::drop(std::string tableName) {
 void ExecutionHandler::use(std::string tableName) {
 
 }
+
+void insert(std::unordered_map<std::string, std::string> columnValues) {
+    
+}
