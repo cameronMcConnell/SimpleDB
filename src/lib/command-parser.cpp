@@ -4,8 +4,8 @@ CommandParser::CommandParser() {
     executionHandler = ExecutionHandler();
 }
 
-std::deque<std::string> CommandParser::tokenize(std::string command) {
-    std::deque<std::string> tokens;
+std::vector<std::string> CommandParser::tokenize(std::string command) {
+    std::vector<std::string> tokens;
     std::string token;
     const char delimeter = ' ';
     std::istringstream iss(command);
@@ -17,14 +17,14 @@ std::deque<std::string> CommandParser::tokenize(std::string command) {
     return tokens;
 }
 
-void CommandParser::checkForValidSize(std::deque<std::string> tokens, size_t size) {
+void CommandParser::checkForValidSize(std::vector<std::string> tokens, size_t size) {
     if (tokens.size() != size) {
         throw "SYNTAX ERROR; INVALID COMMAND;";
     }
 }
 
 void CommandParser::parseCommand(std::string command) {
-    std::deque<std::string> tokens = tokenize(command);
+    std::vector<std::string> tokens = tokenize(command);
 
     if (tokens.empty()) {
         std::cout << "SYNTAX ERROR; NO COMMAND SUPPLIED;" << std::endl;
@@ -64,7 +64,7 @@ void CommandParser::parseCommand(std::string command) {
     }
 }
 
-void CommandParser::parseCreate(std::deque<std::string> tokens) {
+void CommandParser::parseCreate(std::vector<std::string> tokens) {
     std::string tableName = tokens[1];
 
     if (tokens[2] != "WITH") {
@@ -89,7 +89,7 @@ void CommandParser::parseCreate(std::deque<std::string> tokens) {
     std::cout << "SUCCESS IN CREATING TABLE: " << tableName << ";" << std::endl;
 }
 
-void CommandParser::parseDrop(std::deque<std::string> tokens) {
+void CommandParser::parseDrop(std::vector<std::string> tokens) {
     std::string tableName = tokens[1];
 
     executionHandler.drop(tableName);
@@ -97,22 +97,22 @@ void CommandParser::parseDrop(std::deque<std::string> tokens) {
     std::cout << "SUCCESS IN DROPPING TABLE: " << tableName << ";" << std::endl;
 }
 
-void CommandParser::parseUse(std::deque<std::string> tokens) {
+void CommandParser::parseUse(std::vector<std::string> tokens) {
 
 }
 
-void CommandParser::parseSelect(std::deque<std::string> tokens) {
+void CommandParser::parseSelect(std::vector<std::string> tokens) {
 
 }
 
-void CommandParser::parseInsert(std::deque<std::string> tokens) {
+void CommandParser::parseInsert(std::vector<std::string> tokens) {
     
 }
 
-void CommandParser::parseDelete(std::deque<std::string> tokens) {
+void CommandParser::parseDelete(std::vector<std::string> tokens) {
     
 }
 
-void CommandParser::parseUpdate(std::deque<std::string> tokens) {
+void CommandParser::parseUpdate(std::vector<std::string> tokens) {
     
 }
