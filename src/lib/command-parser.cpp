@@ -45,7 +45,13 @@ void CommandParser::parseCommand(std::string command) {
         }
     }
     else if (tokens[0] == "DROP") {
-
+        try {
+            checkForValidSize(tokens, 2);
+            parseDrop(tokens);
+        }
+        catch (const char *message) {
+            std::cout << message << std::endl;
+        }
     }
     else if (tokens[0] == "SELECT") {
     
@@ -105,25 +111,33 @@ void CommandParser::parseCreate(std::deque<std::string> tokens) {
 }
 
 void CommandParser::parseDrop(std::deque<std::string> tokens) {
+    tokens.pop_front();
 
+    checkForEmptyTokens(tokens);
+
+    std::string tableName = tokens[0];
+
+    executionHandler.drop(tableName);
+
+    std::cout << "SUCCESS IN DROPPING TABLE: " << tableName << ";" << std::endl;
 }
 
 void CommandParser::parseUse(std::deque<std::string> tokens) {
 
 }
 
-void CommandParser::parseSelect(std::string command) {
+void CommandParser::parseSelect(std::deque<std::string> tokens) {
 
 }
 
-void CommandParser::parseInsert(std::string command) {
+void CommandParser::parseInsert(std::deque<std::string> tokens) {
     
 }
 
-void CommandParser::parseDelete(std::string command) {
+void CommandParser::parseDelete(std::deque<std::string> tokens) {
     
 }
 
-void CommandParser::parseUpdate(std::string command) {
+void CommandParser::parseUpdate(std::deque<std::string> tokens) {
     
 }
