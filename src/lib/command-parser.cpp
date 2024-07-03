@@ -17,12 +17,6 @@ std::deque<std::string> CommandParser::tokenize(std::string command) {
     return tokens;
 }
 
-void CommandParser::checkForEmptyTokens(std::deque<std::string> tokens) {
-    if (tokens.empty()) {
-        throw "SYNTAX ERROR; INVALID COMMAND;";
-    }
-}
-
 void CommandParser::checkForValidSize(std::deque<std::string> tokens, size_t size) {
     if (tokens.size() != size) {
         throw "SYNTAX ERROR; INVALID COMMAND;";
@@ -71,27 +65,16 @@ void CommandParser::parseCommand(std::string command) {
 }
 
 void CommandParser::parseCreate(std::deque<std::string> tokens) {
-    tokens.pop_front();
+    std::string tableName = tokens[1];
 
-    checkForEmptyTokens(tokens);
-
-    std::string tableName = tokens[0];
-    tokens.pop_front();
-
-    checkForEmptyTokens(tokens);
-
-    if (tokens[0] != "WITH") {
+    if (tokens[2] != "WITH") {
         throw "SYNTAX ERROR; WITH NOT INCLUDED;";
     }
-
-    tokens.pop_front();
-
-    checkForEmptyTokens(tokens);
 
     std::vector<std::string> headers;
     std::string header;
     const char delimeter = ',';
-    std::istringstream iss(tokens[0]);
+    std::istringstream iss(tokens[3]);
 
     while (std::getline(iss, header, delimeter)) {
         if (header == ""){
@@ -101,21 +84,13 @@ void CommandParser::parseCreate(std::deque<std::string> tokens) {
         headers.push_back(header);
     }
 
-    if (headers.empty()) {
-        throw "SYNTAX ERROR; INVALID COMMAND;";
-    }
-
     executionHandler.create(tableName, headers);
 
     std::cout << "SUCCESS IN CREATING TABLE: " << tableName << ";" << std::endl;
 }
 
 void CommandParser::parseDrop(std::deque<std::string> tokens) {
-    tokens.pop_front();
-
-    checkForEmptyTokens(tokens);
-
-    std::string tableName = tokens[0];
+    std::string tableName = tokens[1];
 
     executionHandler.drop(tableName);
 

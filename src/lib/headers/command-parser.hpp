@@ -14,7 +14,6 @@ class CommandParser {
 
         std::deque<std::string> tokenize(std::string command);
 
-        void checkForEmptyTokens(std::deque<std::string> tokens);
         void checkForValidSize(std::deque<std::string> tokens, size_t size);
         
         void parseCreate(std::deque<std::string> tokens);
