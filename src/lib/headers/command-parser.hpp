@@ -21,10 +21,11 @@ class CommandParser {
         void parseDelete(std::vector<std::string> tokens);
         void parseUpdate(std::vector<std::string> tokens);
         ExecutionHandler executionHandler;
+        std::string activeTable;
     public:
         CommandParser(std::string activeTable);
         void parseCommand(std::string command);
-        std::string activeTable;
+        std::string getActiveTable();
 };
 
 #endif

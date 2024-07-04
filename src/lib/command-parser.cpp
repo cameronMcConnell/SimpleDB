@@ -24,6 +24,10 @@ void CommandParser::checkForValidSize(std::vector<std::string> tokens, size_t si
     }
 }
 
+std::string CommandParser::getActiveTable() {
+    return this->activeTable;
+}
+
 void CommandParser::parseCommand(std::string command) {
     std::vector<std::string> tokens = tokenize(command);
 
@@ -58,12 +62,23 @@ void CommandParser::parseCommand(std::string command) {
         }
     }
     else if (tokens[0] == "SELECT") {
-    
+        try {
+            if (this->activeTable == "root") {
+                throw "NO ACTIVE TABLE IS IN USE;";
+            }
+            else if (tokens.size() != 2 || tokens.size() != 4) {
+                throw "SYNTAX ERROR; INVALID COMMAND;";
+            }
+            parseSelect(tokens);
+        }
+        catch (const char *message) {
+            std::cout << message << std::endl;
+        }
     }
     else if (tokens[0] == "INSERT") {
         try {
             if (this->activeTable == "root") {
-                throw "NOT ACTIVE TABLE IS IN USE.";
+                throw "NO ACTIVE TABLE IS IN USE;";
             }
             checkForValidSize(tokens, 2);
             parseInsert(tokens);
@@ -131,7 +146,19 @@ void CommandParser::parseUse(std::vector<std::string> tokens) {
 }
 
 void CommandParser::parseSelect(std::vector<std::string> tokens) {
+    if (tokens.size() == 2) {
+        if (tokens[1] == "*") {
+            executionHandler.selectAll();
+        }
+        else {
+            
+        }
 
+        std::cout << "SUCCESS IN SELECTING FROM TABLE: " << this->activeTable << ";" << std::endl;
+    }
+    else {
+
+    }
 }
 
 void CommandParser::parseInsert(std::vector<std::string> tokens) {

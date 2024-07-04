@@ -19,3 +19,11 @@ void ExecutionHandler::use(std::string tableName) {
 void ExecutionHandler::insert(std::unordered_map<std::string, std::string> columnValues) {
 
 }
+
+void ExecutionHandler::select(std::unordered_map<std::string, std::string> map) {
+    
+}
+
+void ExecutionHandler::selectAll() {
+    
+}
