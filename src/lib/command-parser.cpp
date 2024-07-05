@@ -111,7 +111,7 @@ void CommandParser::parseCreate(std::vector<std::string> tokens) {
     std::istringstream iss(tokens[3]);
 
     while (std::getline(iss, header, delimeter)) {
-        if (header == ""){
+        if (header.empty()){
             throw "SYNTAX ERROR; HEADERS MUST NOT CONTAIN EMPTY STRINGS;";
         }
 
@@ -147,18 +147,32 @@ void CommandParser::parseUse(std::vector<std::string> tokens) {
 
 void CommandParser::parseSelect(std::vector<std::string> tokens) {
     if (tokens.size() == 2) {
-        if (tokens[1] == "*") {
-            executionHandler.selectAll();
+        if (tokens[1] != "*") {
+            throw "SYNTAX ERROR; \'*\' IS NOT INCLUDED;";
         }
-        else {
-            
-        }
-
-        std::cout << "SUCCESS IN SELECTING FROM TABLE: " << this->activeTable << ";" << std::endl;
+        executionHandler.selectAll();
     }
     else {
+        std::vector<std::string> headers;
+        const char delimeter = ',';
+        std::string header;
+        std::istringstream iss(tokens[1]);
 
+        while (std::getline(iss, header, delimeter)) {
+            if (header.empty()) {
+                throw "SYNTAX ERROR; HEADERS MUST NOT CONTAIN EMPTY STRINGS;";
+            }
+            headers.push_back(header);
+        }
+
+        if (tokens[2] != "WHERE") {
+            throw "SYNTAX ERROR; WHERE IS NOT INCLUDED;";
+        }
+
+        
     }
+
+    std::cout << "SUCCESS IN SELECTING FROM TABLE: " << this->activeTable << ";" << std::endl;
 }
 
 void CommandParser::parseInsert(std::vector<std::string> tokens) {
