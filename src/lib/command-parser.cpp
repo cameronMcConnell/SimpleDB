@@ -29,40 +29,25 @@ std::string CommandParser::getActiveTable() {
 }
 
 void CommandParser::parseCommand(std::string command) {
-    std::vector<std::string> tokens = tokenize(command);
+    try {
+        std::vector<std::string> tokens = tokenize(command);
 
-    if (tokens.empty()) {
-        std::cout << "SYNTAX ERROR; NO COMMAND SUPPLIED;" << std::endl;
-    }
-    else if (tokens[0] == "CREATE") {
-        try {
+        if (tokens.empty()) {
+            std::cout << "SYNTAX ERROR; NO COMMAND SUPPLIED;" << std::endl;
+        }
+        else if (tokens[0] == "CREATE") {
             checkForValidSize(tokens, 4);
             parseCreate(tokens);
         }
-        catch (const char *message) {
-            std::cout << message << std::endl;
-        }
-    }
-    else if (tokens[0] == "DROP") {
-        try {
+        else if (tokens[0] == "DROP") {
             checkForValidSize(tokens, 2);
             parseDrop(tokens);
         }
-        catch (const char *message) {
-            std::cout << message << std::endl;
-        }
-    }
-    else if (tokens[0] == "USE") {
-        try {
+        else if (tokens[0] == "USE") {
             checkForValidSize(tokens, 2);
             parseUse(tokens);
         }
-        catch (const char *message) {
-            std::cout << message << std::endl;
-        }
-    }
-    else if (tokens[0] == "SELECT") {
-        try {
+        else if (tokens[0] == "SELECT") {
             if (this->activeTable == "root") {
                 throw "NO ACTIVE TABLE IS IN USE;";
             }
@@ -71,30 +56,25 @@ void CommandParser::parseCommand(std::string command) {
             }
             parseSelect(tokens);
         }
-        catch (const char *message) {
-            std::cout << message << std::endl;
-        }
-    }
-    else if (tokens[0] == "INSERT") {
-        try {
+        else if (tokens[0] == "INSERT") {
             if (this->activeTable == "root") {
                 throw "NO ACTIVE TABLE IS IN USE;";
             }
             checkForValidSize(tokens, 2);
             parseInsert(tokens);
         }
-        catch (const char *message) {
-            std::cout << message << std::endl;
+        else if (tokens[0] == "DELETE") {
+    
+        }
+        else if (tokens[0] == "UPDATE") {
+    
+        }
+        else {
+            std::cout << "SYNTAX ERROR; INVALID TOKEN: " << tokens[0] << ";" << std::endl; 
         }
     }
-    else if (tokens[0] == "DELETE") {
-    
-    }
-    else if (tokens[0] == "UPDATE") {
-    
-    }
-    else {
-        std::cout << "SYNTAX ERROR; INVALID TOKEN: " << tokens[0] << ";" << std::endl; 
+    catch (const char *message) {
+        std::cout << message << std::endl;
     }
 }
 
@@ -169,7 +149,7 @@ void CommandParser::parseSelect(std::vector<std::string> tokens) {
             throw "SYNTAX ERROR; WHERE IS NOT INCLUDED;";
         }
 
-        
+
     }
 
     std::cout << "SUCCESS IN SELECTING FROM TABLE: " << this->activeTable << ";" << std::endl;
@@ -183,7 +163,7 @@ void CommandParser::parseInsert(std::vector<std::string> tokens) {
     std::istringstream iss(tokens[1]);
 
     while (std::getline(iss, token, delimeter)) {
-        if (token == "") {
+        if (token.empty()) {
             throw "SYNTAX ERROR; COLUMN VALUES MUST NOT CONTAIN EMPTY STRINGS;";
         }
 
@@ -193,12 +173,12 @@ void CommandParser::parseInsert(std::vector<std::string> tokens) {
         }
 
         std::string columnName = token.substr(0, index);
-        if (columnName == "") {
+        if (columnName.empty()) {
             throw "SYNTAX ERROR; COLUMN NAMES MUST NOT BE EMPTY STRINGS;";
         }
 
         std::string value = token.substr(index + 1, token.length());
-        if (value == "") {
+        if (value.empty()) {
             throw "SYNTAX ERROR; COLUMN VALUES MUST NOT BE EMPTY STRINGS;";
         }
 
