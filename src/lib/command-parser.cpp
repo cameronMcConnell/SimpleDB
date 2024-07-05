@@ -24,6 +24,16 @@ void CommandParser::checkForValidSize(std::vector<std::string> tokens, size_t si
     }
 }
 
+Operator CommandParser::stringToOperator(std::string opStr) {
+    if (opStr == "==") return Operator::EQUAL;
+    if (opStr == "!=") return Operator::NOT_EQUAL;
+    if (opStr == "<") return Operator::LESS_THAN;
+    if (opStr == ">") return Operator::GREATER_THAN;
+    if (opStr == "<=") return Operator::LESS_EQUAL;
+    if (opStr == ">=") return Operator::GREATER_EQUAL;
+    return Operator::INVALID;
+}
+
 std::string CommandParser::getActiveTable() {
     return this->activeTable;
 }
@@ -51,9 +61,7 @@ void CommandParser::parseCommand(std::string command) {
             if (this->activeTable == "root") {
                 throw "NO ACTIVE TABLE IS IN USE;";
             }
-            else if (tokens.size() != 2 || tokens.size() != 4) {
-                throw "SYNTAX ERROR; INVALID COMMAND;";
-            }
+            checkForValidSize(tokens, 2);
             parseSelect(tokens);
         }
         else if (tokens[0] == "INSERT") {
@@ -126,30 +134,31 @@ void CommandParser::parseUse(std::vector<std::string> tokens) {
 }
 
 void CommandParser::parseSelect(std::vector<std::string> tokens) {
-    if (tokens.size() == 2) {
-        if (tokens[1] != "*") {
-            throw "SYNTAX ERROR; \'*\' IS NOT INCLUDED;";
-        }
+    if (tokens[1] == "*") {
         executionHandler.selectAll();
     }
     else {
-        std::vector<std::string> headers;
-        const char delimeter = ',';
-        std::string header;
-        std::istringstream iss(tokens[1]);
+        std::unordered_map<std::string, Condition> conditions;
+        std::regex conditionRegex(R"((\w+)(==|!=|<|>|<=|>=)([^,]+),)");
+        std::sregex_iterator iter(tokens[1].begin(), tokens[1].end(), conditionRegex);
+        std::sregex_iterator end;
 
-        while (std::getline(iss, header, delimeter)) {
-            if (header.empty()) {
-                throw "SYNTAX ERROR; HEADERS MUST NOT CONTAIN EMPTY STRINGS;";
+        while (iter != end) {
+            std::smatch match = *iter;
+            std::string columnName = match[1].str();
+            std::string opStr = match[2].str();
+            std::string value = match[3].str();
+
+            Operator op = stringToOperator(opStr);
+            if (op == Operator::INVALID) {
+                throw "SYNTAX ERROR; OPERATOR IS INVALID;";
             }
-            headers.push_back(header);
+
+            conditions[columnName] = {op, value};
+            iter++;
         }
 
-        if (tokens[2] != "WHERE") {
-            throw "SYNTAX ERROR; WHERE IS NOT INCLUDED;";
-        }
-
-
+        executionHandler.select(conditions);
     }
 
     std::cout << "SUCCESS IN SELECTING FROM TABLE: " << this->activeTable << ";" << std::endl;
