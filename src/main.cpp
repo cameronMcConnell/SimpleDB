@@ -1,5 +1,6 @@
 #include "lib/headers/input-handler.hpp"
 #include "lib/headers/command-parser.hpp"
+#include "lib/headers/errors.hpp"
 #include <string.h>
 
 int parseArgs(int argc, char* argv[], int &portNumber, bool &socketFlag) {
@@ -48,8 +49,8 @@ int main(int argc, char *argv[]) {
         try {
             inputHandler.openSocket();
         }
-        catch (const char *message) {
-            std::cerr << message << '\n';
+        catch (const SocketError& e) {
+            std::cerr << e.what() << '\n';
             return 1;
         }
 

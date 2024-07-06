@@ -3,6 +3,7 @@
 
 #include "execution-handler.hpp"
 #include "expressions.hpp"
+#include "errors.hpp"
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -15,6 +16,7 @@ class CommandParser {
         std::vector<std::string> tokenize(std::string command);
         void checkForValidSize(std::vector<std::string> tokens, size_t size);
         Operator stringToOperator(std::string opStr);
+        void ensureActiveTable();
 
         std::unordered_map<std::string, Predicate> parseCondtions(std::string conditions);
         std::unordered_map<std::string, std::string> parseStatements(std::string statements);

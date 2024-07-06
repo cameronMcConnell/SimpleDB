@@ -30,7 +30,7 @@ void SocketInputHandler::openSocket() {
     // Create socket
     this->serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (this->serverSocket == -1){
-        throw "ERROR CREATING SOCKET";
+        throw SocketError("ERROR CREATING SOCKET");
     }
 
     // Create address
@@ -41,18 +41,18 @@ void SocketInputHandler::openSocket() {
 
     // Bind the socket
     if (bind(serverSocket, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) == -1) {
-        throw "ERROR BINDING SOCKET";
+        throw SocketError("ERROR BINDING SOCKET");
     }
 
     // Listen on the socket
     if (listen(this->serverSocket, 5) == -1) {
-        throw "ERROR LISTENING ON SOCKET";
+        throw SocketError("ERROR LISTENING ON SOCKET");
     }
 
     // Accept only one client connection
     this->clientSocket = accept(this->serverSocket, nullptr, nullptr);
     if (this->clientSocket == -1) {
-        throw "ERROR ACCEPTING CLIENT CONNECTION";
+        throw SocketError("ERROR ACCEPTING CLIENT CONNECTION");
     }
 
     std::cout << "SOCKET ACCEPTING MESSAGES ON PORT: " << portNumber << std::endl;

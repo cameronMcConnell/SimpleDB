@@ -20,7 +20,7 @@ std::vector<std::string> CommandParser::tokenize(std::string command) {
 
 void CommandParser::checkForValidSize(std::vector<std::string> tokens, size_t size) {
     if (tokens.size() != size) {
-        throw "SYNTAX ERROR; INVALID COMMAND;";
+        throw SyntaxError("SYNTAX ERROR; INVALID COMMAND;");
     }
 }
 
@@ -48,7 +48,7 @@ std::unordered_map<std::string, Predicate> CommandParser::parseCondtions(std::st
 
             Operator op = stringToOperator(opStr);
             if (op == Operator::INVALID) {
-                throw "SYNTAX ERROR; OPERATOR IS INVALID;";
+                throw SyntaxError("SYNTAX ERROR; OPERATOR IS INVALID;");
             }
 
             conditionsMap[columnName] = {op, value};
@@ -67,22 +67,22 @@ std::unordered_map<std::string, std::string> CommandParser::parseStatements(std:
 
     while (std::getline(iss, token, delimeter)) {
         if (token.empty()) {
-            throw "SYNTAX ERROR; COLUMN VALUES MUST NOT CONTAIN EMPTY STRINGS;";
+            throw SyntaxError("SYNTAX ERROR; COLUMN VALUES MUST NOT CONTAIN EMPTY STRINGS;");
         }
 
         size_t index = token.find('=');
         if (index == std::string::npos) {
-            throw "SYNTAX ERROR; COLUMN VALUES MUST INCLUDE =;";
+            throw SyntaxError("SYNTAX ERROR; COLUMN VALUES MUST INCLUDE =;");
         }
 
         std::string columnName = token.substr(0, index);
         if (columnName.empty()) {
-            throw "SYNTAX ERROR; COLUMN NAMES MUST NOT BE EMPTY STRINGS;";
+            throw SyntaxError("SYNTAX ERROR; COLUMN NAMES MUST NOT BE EMPTY STRINGS;");
         }
 
         std::string value = token.substr(index + 1, token.length());
         if (value.empty()) {
-            throw "SYNTAX ERROR; COLUMN VALUES MUST NOT BE EMPTY STRINGS;";
+            throw SyntaxError("SYNTAX ERROR; COLUMN VALUES MUST NOT BE EMPTY STRINGS;");
         }
 
         statementsMap[columnName] = value;
@@ -99,7 +99,7 @@ std::vector<std::string> CommandParser::parseHeaders(std::string headers) {
 
     while (std::getline(iss, header, delimeter)) {
         if (header.empty()){
-            throw "SYNTAX ERROR; HEADERS MUST NOT CONTAIN EMPTY STRINGS;";
+            throw SyntaxError("SYNTAX ERROR; HEADERS MUST NOT CONTAIN EMPTY STRINGS;");
         }
 
         headersVector.push_back(header);
@@ -110,6 +110,12 @@ std::vector<std::string> CommandParser::parseHeaders(std::string headers) {
 
 std::string CommandParser::getActiveTable() {
     return this->activeTable;
+}
+
+void CommandParser::ensureActiveTable() {
+    if (this->activeTable == "root") {
+        throw SyntaxError("NO ACTIVE TABLE IS IN USE;");
+    }
 }
 
 void CommandParser::parseCommand(std::string command) {
@@ -132,30 +138,22 @@ void CommandParser::parseCommand(std::string command) {
             parseUse(tokens);
         }
         else if (tokens[0] == "SELECT") {
-            if (this->activeTable == "root") {
-                throw "NO ACTIVE TABLE IS IN USE;";
-            }
+            ensureActiveTable();
             checkForValidSize(tokens, 2);
             parseSelect(tokens);
         }
         else if (tokens[0] == "INSERT") {
-            if (this->activeTable == "root") {
-                throw "NO ACTIVE TABLE IS IN USE;";
-            }
+            ensureActiveTable();
             checkForValidSize(tokens, 2);
             parseInsert(tokens);
         }
         else if (tokens[0] == "DELETE") {
-            if (this->activeTable == "root") {
-                throw "NO ACTIVE TABLE IS IN USE;";
-            }
+            ensureActiveTable();
             checkForValidSize(tokens, 2);
             parseDelete(tokens);
         }
         else if (tokens[0] == "UPDATE") {
-            if (this->activeTable == "root") {
-                throw "NO ACTIVE TABLE IS IN USE;";
-            }
+            ensureActiveTable();
             checkForValidSize(tokens, 4);
             parseUpdate(tokens);
         }
@@ -163,8 +161,8 @@ void CommandParser::parseCommand(std::string command) {
             std::cout << "SYNTAX ERROR; INVALID TOKEN: " << tokens[0] << ";" << std::endl; 
         }
     }
-    catch (const char *message) {
-        std::cout << message << std::endl;
+    catch (const SyntaxError& e) {
+        std::cout << e.what() << std::endl;
     }
 }
 
@@ -172,7 +170,7 @@ void CommandParser::parseCreate(std::vector<std::string> tokens) {
     std::string tableName = tokens[1];
 
     if (tokens[2] != "WITH") {
-        throw "SYNTAX ERROR; WITH NOT INCLUDED;";
+        throw SyntaxError("SYNTAX ERROR; WITH NOT INCLUDED;");
     }
 
     std::vector<std::string> headers = parseHeaders(tokens[3]);
@@ -235,7 +233,7 @@ void CommandParser::parseDelete(std::vector<std::string> tokens) {
 
 void CommandParser::parseUpdate(std::vector<std::string> tokens) {
     if (tokens[2] != "WITH") {
-        throw "SYNTAX ERROR; WITH NOT INCLUDED;";
+        throw SyntaxError("SYNTAX ERROR; WITH NOT INCLUDED;");
     }
     
     if (tokens[1]== "*") {
