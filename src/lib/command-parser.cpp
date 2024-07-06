@@ -34,6 +34,80 @@ Operator CommandParser::stringToOperator(std::string opStr) {
     return Operator::INVALID;
 }
 
+std::unordered_map<std::string, Predicate> CommandParser::parseCondtions(std::string conditions) {
+        std::unordered_map<std::string, Predicate> conditionsMap;
+        std::regex conditionRegex(R"((\w+)(==|!=|<|>|<=|>=)([^,]+),)");
+        std::sregex_iterator iter(conditions.begin(), conditions.end(), conditionRegex);
+        std::sregex_iterator end;
+
+        while (iter != end) {
+            std::smatch match = *iter;
+            std::string columnName = match[1].str();
+            std::string opStr = match[2].str();
+            std::string value = match[3].str();
+
+            Operator op = stringToOperator(opStr);
+            if (op == Operator::INVALID) {
+                throw "SYNTAX ERROR; OPERATOR IS INVALID;";
+            }
+
+            conditionsMap[columnName] = {op, value};
+            iter++;
+        }
+
+        return conditionsMap;
+}
+
+std::unordered_map<std::string, std::string> CommandParser::parseStatements(std::string statements) {
+    std::unordered_map<std::string, std::string> statementsMap;
+    
+    std::string token;
+    const char delimeter = ',';
+    std::istringstream iss(statements);
+
+    while (std::getline(iss, token, delimeter)) {
+        if (token.empty()) {
+            throw "SYNTAX ERROR; COLUMN VALUES MUST NOT CONTAIN EMPTY STRINGS;";
+        }
+
+        size_t index = token.find('=');
+        if (index == std::string::npos) {
+            throw "SYNTAX ERROR; COLUMN VALUES MUST INCLUDE =;";
+        }
+
+        std::string columnName = token.substr(0, index);
+        if (columnName.empty()) {
+            throw "SYNTAX ERROR; COLUMN NAMES MUST NOT BE EMPTY STRINGS;";
+        }
+
+        std::string value = token.substr(index + 1, token.length());
+        if (value.empty()) {
+            throw "SYNTAX ERROR; COLUMN VALUES MUST NOT BE EMPTY STRINGS;";
+        }
+
+        statementsMap[columnName] = value;
+    }
+
+    return statementsMap;
+}
+
+std::vector<std::string> CommandParser::parseHeaders(std::string headers) {
+    std::vector<std::string> headersVector;
+    std::string header;
+    const char delimeter = ',';
+    std::istringstream iss(headers);
+
+    while (std::getline(iss, header, delimeter)) {
+        if (header.empty()){
+            throw "SYNTAX ERROR; HEADERS MUST NOT CONTAIN EMPTY STRINGS;";
+        }
+
+        headersVector.push_back(header);
+    }
+
+    return headersVector;
+}
+
 std::string CommandParser::getActiveTable() {
     return this->activeTable;
 }
@@ -101,18 +175,7 @@ void CommandParser::parseCreate(std::vector<std::string> tokens) {
         throw "SYNTAX ERROR; WITH NOT INCLUDED;";
     }
 
-    std::vector<std::string> headers;
-    std::string header;
-    const char delimeter = ',';
-    std::istringstream iss(tokens[3]);
-
-    while (std::getline(iss, header, delimeter)) {
-        if (header.empty()){
-            throw "SYNTAX ERROR; HEADERS MUST NOT CONTAIN EMPTY STRINGS;";
-        }
-
-        headers.push_back(header);
-    }
+    std::vector<std::string> headers = parseHeaders(tokens[3]);
 
     executionHandler.create(tableName, headers);
 
@@ -146,25 +209,7 @@ void CommandParser::parseSelect(std::vector<std::string> tokens) {
         executionHandler.selectAll();
     }
     else {
-        std::unordered_map<std::string, Predicate> conditions;
-        std::regex conditionRegex(R"((\w+)(==|!=|<|>|<=|>=)([^,]+),)");
-        std::sregex_iterator iter(tokens[1].begin(), tokens[1].end(), conditionRegex);
-        std::sregex_iterator end;
-
-        while (iter != end) {
-            std::smatch match = *iter;
-            std::string columnName = match[1].str();
-            std::string opStr = match[2].str();
-            std::string value = match[3].str();
-
-            Operator op = stringToOperator(opStr);
-            if (op == Operator::INVALID) {
-                throw "SYNTAX ERROR; OPERATOR IS INVALID;";
-            }
-
-            conditions[columnName] = {op, value};
-            iter++;
-        }
+        std::unordered_map<std::string, Predicate> conditions = parseCondtions(tokens[1]);
 
         executionHandler.select(conditions);
     }
@@ -173,60 +218,15 @@ void CommandParser::parseSelect(std::vector<std::string> tokens) {
 }
 
 void CommandParser::parseInsert(std::vector<std::string> tokens) {
-    std::unordered_map<std::string, std::string> columnValues;
-    
-    std::string token;
-    const char delimeter = ',';
-    std::istringstream iss(tokens[1]);
+    std::unordered_map<std::string, std::string> statements = parseStatements(tokens[1]);
 
-    while (std::getline(iss, token, delimeter)) {
-        if (token.empty()) {
-            throw "SYNTAX ERROR; COLUMN VALUES MUST NOT CONTAIN EMPTY STRINGS;";
-        }
-
-        size_t index = token.find('=');
-        if (index == std::string::npos) {
-            throw "SYNTAX ERROR; COLUMN VALUES MUST INCLUDE =;";
-        }
-
-        std::string columnName = token.substr(0, index);
-        if (columnName.empty()) {
-            throw "SYNTAX ERROR; COLUMN NAMES MUST NOT BE EMPTY STRINGS;";
-        }
-
-        std::string value = token.substr(index + 1, token.length());
-        if (value.empty()) {
-            throw "SYNTAX ERROR; COLUMN VALUES MUST NOT BE EMPTY STRINGS;";
-        }
-
-        columnValues[columnName] = value;
-    }
-
-    executionHandler.insert(columnValues);
+    executionHandler.insert(statements);
 
     std::cout << "SUCCESS IN INSERTING ON TABLE: " << this->activeTable << ";" << std::endl;
 }
 
 void CommandParser::parseDelete(std::vector<std::string> tokens) {
-    std::unordered_map<std::string, Predicate> conditions;
-    std::regex conditionRegex(R"((\w+)(==|!=|<|>|<=|>=)([^,]+),)");
-    std::sregex_iterator iter(tokens[1].begin(), tokens[1].end(), conditionRegex);
-    std::sregex_iterator end;
-
-    while (iter != end) {
-        std::smatch match = *iter;
-        std::string columnName = match[1].str();
-        std::string opStr = match[2].str();
-        std::string value = match[3].str();
-
-        Operator op = stringToOperator(opStr);
-        if (op == Operator::INVALID) {
-            throw "SYNTAX ERROR; OPERATOR IS INVALID;";
-        }
-
-        conditions[columnName] = {op, value};
-        iter++;
-    }
+    std::unordered_map<std::string, Predicate> conditions = parseCondtions(tokens[1]);
 
     executionHandler.delete_(conditions);
 
@@ -234,5 +234,22 @@ void CommandParser::parseDelete(std::vector<std::string> tokens) {
 }
 
 void CommandParser::parseUpdate(std::vector<std::string> tokens) {
+    if (tokens[2] != "WITH") {
+        throw "SYNTAX ERROR; WITH NOT INCLUDED;";
+    }
     
+    if (tokens[1]== "*") {
+        std::unordered_map<std::string, std::string> statements = parseStatements(tokens[3]);
+
+        executionHandler.updateAll(statements);
+    }
+    else {
+        std::unordered_map<std::string, Predicate> conditions = parseCondtions(tokens[1]);
+
+        std::unordered_map<std::string, std::string> statements = parseStatements(tokens[3]);
+
+        executionHandler.update(conditions, statements);
+    }
+
+    std::cout << "SUCCESS IN UPDATING ON TABLE: " << this->activeTable << ";" << std::endl;
 }

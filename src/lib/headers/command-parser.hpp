@@ -16,6 +16,9 @@ class CommandParser {
         void checkForValidSize(std::vector<std::string> tokens, size_t size);
         Operator stringToOperator(std::string opStr);
 
+        std::unordered_map<std::string, Predicate> parseCondtions(std::string conditions);
+        std::unordered_map<std::string, std::string> parseStatements(std::string statements);
+        std::vector<std::string> parseHeaders(std::string headers);
         void parseCreate(std::vector<std::string> tokens);
         void parseDrop(std::vector<std::string> tokens);
         void parseUse(std::vector<std::string> tokens);
