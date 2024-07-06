@@ -1,10 +1,10 @@
 #ifndef EXECUTION_HANDLER
 #define EXECUTION_HANDLER
 
+#include "expressions.hpp"
 #include <string>
 #include <vector>
 #include <unordered_map>
-#include "command-parser.hpp"
 
 class ExecutionHandler {
     private:
@@ -15,7 +15,7 @@ class ExecutionHandler {
         void drop(std::string tableName);
         void use(std::string tableName);
         void insert(std::unordered_map<std::string, std::string> columnValues);
-        void select(std::unordered_map<std::string, Condition> conditions);
+        void select(std::unordered_map<std::string, Predicate> conditions);
         void selectAll();
 };
 

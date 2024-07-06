@@ -2,27 +2,13 @@
 #define COMMAND_PARSER
 
 #include "execution-handler.hpp"
+#include "expressions.hpp"
 #include <string>
 #include <iostream>
 #include <sstream>
 #include <vector>
 #include <unordered_map>
 #include <regex>
-
-enum class Operator {
-    EQUAL,
-    NOT_EQUAL,
-    LESS_THAN,
-    GREATER_THAN,
-    LESS_EQUAL,
-    GREATER_EQUAL,
-    INVALID,
-};
-
-struct Condition {
-    Operator op;
-    std::string value;
-};
 
 class CommandParser {
     private:

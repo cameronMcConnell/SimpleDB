@@ -138,7 +138,7 @@ void CommandParser::parseSelect(std::vector<std::string> tokens) {
         executionHandler.selectAll();
     }
     else {
-        std::unordered_map<std::string, Condition> conditions;
+        std::unordered_map<std::string, Predicate> conditions;
         std::regex conditionRegex(R"((\w+)(==|!=|<|>|<=|>=)([^,]+),)");
         std::sregex_iterator iter(tokens[1].begin(), tokens[1].end(), conditionRegex);
         std::sregex_iterator end;
