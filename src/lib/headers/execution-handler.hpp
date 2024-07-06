@@ -17,6 +17,7 @@ class ExecutionHandler {
         void insert(std::unordered_map<std::string, std::string> columnValues);
         void select(std::unordered_map<std::string, Predicate> conditions);
         void selectAll();
+        void delete_(std::unordered_map<std::string, Predicate> condtions);
 };
 
 #endif

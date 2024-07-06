@@ -72,10 +72,18 @@ void CommandParser::parseCommand(std::string command) {
             parseInsert(tokens);
         }
         else if (tokens[0] == "DELETE") {
-    
+            if (this->activeTable == "root") {
+                throw "NO ACTIVE TABLE IS IN USE;";
+            }
+            checkForValidSize(tokens, 2);
+            parseDelete(tokens);
         }
         else if (tokens[0] == "UPDATE") {
-    
+            if (this->activeTable == "root") {
+                throw "NO ACTIVE TABLE IS IN USE;";
+            }
+            checkForValidSize(tokens, 4);
+            parseUpdate(tokens);
         }
         else {
             std::cout << "SYNTAX ERROR; INVALID TOKEN: " << tokens[0] << ";" << std::endl; 
@@ -200,7 +208,29 @@ void CommandParser::parseInsert(std::vector<std::string> tokens) {
 }
 
 void CommandParser::parseDelete(std::vector<std::string> tokens) {
-    
+    std::unordered_map<std::string, Predicate> conditions;
+    std::regex conditionRegex(R"((\w+)(==|!=|<|>|<=|>=)([^,]+),)");
+    std::sregex_iterator iter(tokens[1].begin(), tokens[1].end(), conditionRegex);
+    std::sregex_iterator end;
+
+    while (iter != end) {
+        std::smatch match = *iter;
+        std::string columnName = match[1].str();
+        std::string opStr = match[2].str();
+        std::string value = match[3].str();
+
+        Operator op = stringToOperator(opStr);
+        if (op == Operator::INVALID) {
+            throw "SYNTAX ERROR; OPERATOR IS INVALID;";
+        }
+
+        conditions[columnName] = {op, value};
+        iter++;
+    }
+
+    executionHandler.delete_(conditions);
+
+    std::cout << "SUCCESS IN DELETING ON TABLE: " << this->activeTable << ";" << std::endl;
 }
 
 void CommandParser::parseUpdate(std::vector<std::string> tokens) {

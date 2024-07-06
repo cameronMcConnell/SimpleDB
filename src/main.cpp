@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
 
         while (1) {
             std::string command = inputHandler.getInput();
-            if (command == "") {
+            if (command.empty()) {
                 continue;
             }
 

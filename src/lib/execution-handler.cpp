@@ -20,10 +20,14 @@ void ExecutionHandler::insert(std::unordered_map<std::string, std::string> colum
 
 }
 
-void ExecutionHandler::select(std::unordered_map<std::string, std::string> map) {
+void ExecutionHandler::select(std::unordered_map<std::string, Predicate> conditions) {
     
 }
 
 void ExecutionHandler::selectAll() {
     
+}
+
+void ExecutionHandler::delete_(std::unordered_map<std::string, Predicate> condtions) {
+
 }
