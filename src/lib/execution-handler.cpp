@@ -1,7 +1,12 @@
 #include "headers/execution-handler.hpp"
 
 ExecutionHandler::ExecutionHandler() {
-    
+    this->csvParser = CSVParser();
+    this->activeTable = "root";
+}
+
+void ExecutionHandler::setActiveTable(std::string setActiveTable) {
+    this->activeTable = activeTable;
 }
 
 void ExecutionHandler::create(std::string tableName, std::vector<std::string> headers) {

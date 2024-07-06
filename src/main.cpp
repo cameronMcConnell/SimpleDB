@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
     std::cout << "| SimpleDB | VERSION: 1.0 |\n";
     std::cout << "+-------------------------+" << std::endl;
 
-    CommandParser commandParser = CommandParser("root");
+    CommandParser commandParser = CommandParser();
 
     if (socketFlag) {
         SocketInputHandler inputHandler = SocketInputHandler(portNumber);

@@ -1,6 +1,7 @@
 #ifndef EXECUTION_HANDLER
 #define EXECUTION_HANDLER
 
+#include "csv-parser.hpp"
 #include "expressions.hpp"
 #include <string>
 #include <vector>
@@ -8,9 +9,12 @@
 
 class ExecutionHandler {
     private:
-        
+        CSVParser csvParser;
+        std::string activeTable;
+
     public:
         ExecutionHandler();
+        void setActiveTable(std::string activeTable);
 
         void create(std::string tableName, std::vector<std::string> headers);
         void drop(std::string tableName);

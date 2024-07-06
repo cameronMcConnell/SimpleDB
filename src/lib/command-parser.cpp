@@ -1,8 +1,8 @@
 #include "headers/command-parser.hpp"
 
-CommandParser::CommandParser(std::string activeTable) {
-    executionHandler = ExecutionHandler();
-    this->activeTable = activeTable;
+CommandParser::CommandParser() {
+    this->executionHandler = ExecutionHandler();
+    this->activeTable = "root";
 }
 
 std::vector<std::string> CommandParser::tokenize(std::string command) {
@@ -187,6 +187,7 @@ void CommandParser::parseDrop(std::vector<std::string> tokens) {
 
     if (tableName == this->activeTable) {
         this->activeTable = "root";
+        executionHandler.setActiveTable("root");
     }
 
     std::cout << "SUCCESS IN DROPPING TABLE: " << tableName << ";" << std::endl;
@@ -198,6 +199,7 @@ void CommandParser::parseUse(std::vector<std::string> tokens) {
     executionHandler.use(tableName);
 
     this->activeTable = tableName;
+    executionHandler.setActiveTable(tableName);
 
     std::cout << "SUCCESS IN USING TABLE: " << tableName << ";" << std::endl;
 }

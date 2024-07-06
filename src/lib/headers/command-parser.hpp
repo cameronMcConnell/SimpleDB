@@ -32,7 +32,7 @@ class CommandParser {
         ExecutionHandler executionHandler;
         std::string activeTable;
     public:
-        CommandParser(std::string activeTable);
+        CommandParser();
         void parseCommand(std::string command);
         std::string getActiveTable();
 };
