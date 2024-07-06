@@ -11,6 +11,7 @@ class ExecutionHandler {
     private:
         CSVParser csvParser;
         std::string activeTable;
+        std::vector<std::unordered_map<std::string, std::string>> table;
 
     public:
         ExecutionHandler();
