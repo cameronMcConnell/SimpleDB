@@ -3,15 +3,19 @@
 
 #include "csv-parser.hpp"
 #include "expressions.hpp"
+#include "errors.hpp"
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <cstdio>
 
 class ExecutionHandler {
     private:
         CSVParser csvParser;
         std::string activeTable;
         std::vector<std::unordered_map<std::string, std::string>> table;
+
+        void writeTable(std::string csvString);
 
     public:
         ExecutionHandler();

@@ -7,8 +7,9 @@
 
 class CSVParser {
     public:
-        CSVParser();
+        CSVParser() = default;
         std::vector<std::unordered_map<std::string, std::string>> loadTable(std::string tableName);
+        std::string toCsvString(std::vector<std::unordered_map<std::string, std::string>> table);
 };
 
 #endif
