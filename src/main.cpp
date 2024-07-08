@@ -1,7 +1,12 @@
 #include "lib/headers/input-handler.hpp"
 #include "lib/headers/command-parser.hpp"
 #include "lib/headers/errors.hpp"
+
 #include <string.h>
+#include <bits/stdc++.h>
+#include <iostream>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 int parseArgs(int argc, char* argv[], int &portNumber, bool &socketFlag) {
     if (argc > 3) {
@@ -29,11 +34,21 @@ int parseArgs(int argc, char* argv[], int &portNumber, bool &socketFlag) {
     return 0;
 }
 
+int directoryExists() {
+    const char* dir = "./tables";
+    struct stat sb;
+    return stat(dir, &sb);
+}
+
 int main(int argc, char *argv[]) {
     int portNumber;
     bool socketFlag;
 
     if (parseArgs(argc, argv, portNumber, socketFlag) == 1) {
+        return 1;
+    }
+
+    if (directoryExists() != 0 && mkdir("tables", 0777) == -1) {
         return 1;
     }
 

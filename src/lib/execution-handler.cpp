@@ -36,7 +36,7 @@ void ExecutionHandler::insert(std::unordered_map<std::string, std::string> state
     
     std::string csvString = csvParser.toCsvString(this->table);
 
-    writeTable(csvString);
+    //append to table here.
 }
 
 void ExecutionHandler::select(std::unordered_map<std::string, Predicate> conditions) {
@@ -78,10 +78,14 @@ void ExecutionHandler::select(std::unordered_map<std::string, Predicate> conditi
     }
 
     std::string csvString = csvParser.toCsvString(selectRows);
+
+    // Do stuff with string here.
 }
 
 void ExecutionHandler::selectAll() {
     std::string csvString = csvParser.toCsvString(this->table);
+
+    // Do suff with string here.
 }
 
 void ExecutionHandler::delete_(std::unordered_map<std::string, Predicate> condtions) {

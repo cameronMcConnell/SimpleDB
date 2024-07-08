@@ -5,7 +5,7 @@ std::vector<std::string> CSVParser::getHeaders() {
 }
 
 std::vector<std::unordered_map<std::string, std::string>> CSVParser::loadTable(std::string tableName) {
-    std::string fileName = tableName + ".csv";
+    std::string fileName = "tables/" + tableName + ".csv";
     std::ifstream csvFile(fileName, std::ios::in);
 
     std::vector<std::unordered_map<std::string, std::string>> table;
