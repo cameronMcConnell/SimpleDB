@@ -13,11 +13,12 @@
 
 class CommandParser {
     private:
+        ExecutionHandler executionHandler;
+        std::string activeTable;
         std::vector<std::string> tokenize(std::string command);
         void checkForValidSize(std::vector<std::string> tokens, size_t size);
         Operator stringToOperator(std::string opStr);
         void ensureActiveTable();
-
         std::unordered_map<std::string, Predicate> parseCondtions(std::string conditions);
         std::unordered_map<std::string, std::string> parseStatements(std::string statements);
         std::vector<std::string> parseHeaders(std::string headers);
@@ -28,9 +29,7 @@ class CommandParser {
         void parseInsert(std::vector<std::string> tokens);
         void parseDelete(std::vector<std::string> tokens);
         void parseUpdate(std::vector<std::string> tokens);
-        
-        ExecutionHandler executionHandler;
-        std::string activeTable;
+
     public:
         CommandParser();
         void parseCommand(std::string command);
