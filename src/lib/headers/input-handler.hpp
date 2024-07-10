@@ -2,6 +2,7 @@
 #define INPUT_HANDLER
 
 #include "errors.hpp"
+
 #include <string>
 #include <iostream>
 #include <sys/socket.h>

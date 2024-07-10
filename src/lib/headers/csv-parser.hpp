@@ -1,6 +1,8 @@
 #ifndef CSV_PARSER
 #define CSV_PARSER
 
+#include "errors.hpp"
+
 #include <vector>
 #include <unordered_map>
 #include <string>

@@ -119,50 +119,45 @@ void CommandParser::ensureActiveTable() {
 }
 
 void CommandParser::parseCommand(std::string command) {
-    try {
-        std::vector<std::string> tokens = tokenize(command);
+    std::vector<std::string> tokens = tokenize(command);
 
-        if (tokens.empty()) {
-            std::cout << "SYNTAX ERROR; NO COMMAND SUPPLIED;" << std::endl;
-        }
-        else if (tokens[0] == "CREATE") {
-            checkForValidSize(tokens, 4);
-            parseCreate(tokens);
-        }
-        else if (tokens[0] == "DROP") {
-            checkForValidSize(tokens, 2);
-            parseDrop(tokens);
-        }
-        else if (tokens[0] == "USE") {
-            checkForValidSize(tokens, 2);
-            parseUse(tokens);
-        }
-        else if (tokens[0] == "SELECT") {
-            ensureActiveTable();
-            checkForValidSize(tokens, 2);
-            parseSelect(tokens);
-        }
-        else if (tokens[0] == "INSERT") {
-            ensureActiveTable();
-            checkForValidSize(tokens, 2);
-            parseInsert(tokens);
-        }
-        else if (tokens[0] == "DELETE") {
-            ensureActiveTable();
-            checkForValidSize(tokens, 2);
-            parseDelete(tokens);
-        }
-        else if (tokens[0] == "UPDATE") {
-            ensureActiveTable();
-            checkForValidSize(tokens, 4);
-            parseUpdate(tokens);
-        }
-        else {
-            std::cout << "SYNTAX ERROR; INVALID TOKEN: " << tokens[0] << ";" << std::endl; 
-        }
+    if (tokens.empty()) {
+        std::cout << "SYNTAX ERROR; NO COMMAND SUPPLIED;" << std::endl;
     }
-    catch (const SyntaxError& e) {
-        std::cout << e.what() << std::endl;
+    else if (tokens[0] == "CREATE") {
+        checkForValidSize(tokens, 4);
+        parseCreate(tokens);
+    }
+    else if (tokens[0] == "DROP") {
+        checkForValidSize(tokens, 2);
+        parseDrop(tokens);
+    }
+    else if (tokens[0] == "USE") {
+        checkForValidSize(tokens, 2);
+        parseUse(tokens);
+    }
+    else if (tokens[0] == "SELECT") {
+        ensureActiveTable();
+        checkForValidSize(tokens, 2);
+        parseSelect(tokens);
+    }
+    else if (tokens[0] == "INSERT") {
+        ensureActiveTable();
+        checkForValidSize(tokens, 2);
+        parseInsert(tokens);
+    }
+    else if (tokens[0] == "DELETE") {
+        ensureActiveTable();
+        checkForValidSize(tokens, 2);
+        parseDelete(tokens);
+    }
+    else if (tokens[0] == "UPDATE") {
+        ensureActiveTable();
+        checkForValidSize(tokens, 4);
+        parseUpdate(tokens);
+    }
+    else {
+        std::cout << "SYNTAX ERROR; INVALID TOKEN: " << tokens[0] << ";" << std::endl; 
     }
 }
 

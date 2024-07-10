@@ -42,7 +42,8 @@ std::vector<std::unordered_map<std::string, std::string>> CSVParser::loadTable(s
             }
         }
     } else {
-        // throw error here.
+        std::string message = "ERROR OPENING FILE " + fileName + ";";
+        throw FileError(message);
     }
 
     return table;

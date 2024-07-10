@@ -81,7 +81,15 @@ int main(int argc, char *argv[]) {
                 return 0;
             }
 
-            commandParser.parseCommand(command);
+            try {
+                commandParser.parseCommand(command);
+            }
+            catch (const SyntaxError& e) {
+                std::cout << e.what() << std::endl;
+            }
+            catch (const FileError& e) {
+                std::cout << e.what() << std::endl;
+            }
         }
     }
     else {
@@ -96,7 +104,15 @@ int main(int argc, char *argv[]) {
                 return 0;
             }
 
-            commandParser.parseCommand(command);
+            try {
+                commandParser.parseCommand(command);
+            }
+            catch (const SyntaxError& e) {
+                std::cout << e.what() << std::endl;
+            }
+            catch (const FileError& e) {
+                std::cout << e.what() << std::endl;
+            }
         }
     }
 }
