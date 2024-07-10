@@ -7,6 +7,7 @@
 
 #include <string>
 #include <vector>
+#include <utility>
 #include <unordered_map>
 #include <cstdio>
 
@@ -15,7 +16,7 @@ class ExecutionHandler {
         CSVParser csvParser;
         std::string activeTable;
         std::vector<std::unordered_map<std::string, std::string>> table;
-        std::vector<std::unordered_map<std::string, std::string>> getSelectedRows(std::unordered_map<std::string, Predicate> conditions);
+        std::pair<std::vector<std::unordered_map<std::string, std::string>>, std::vector<std::unordered_map<std::string, std::string>>> getSelectedAndUnselectedRows(std::unordered_map<std::string, Predicate> conditions);
         void updateRows(std::vector<std::unordered_map<std::string, std::string>> &rows, std::unordered_map<std::string, std::string> statements);
         void verifyStatementHeaders(std::unordered_map<std::string, std::string> statements);
 

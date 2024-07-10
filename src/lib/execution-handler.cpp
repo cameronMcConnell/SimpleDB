@@ -10,7 +10,7 @@ void ExecutionHandler::setActiveTable(std::string activeTable) {
     this->table = csvParser.loadTable(activeTable);
 }
 
-std::vector<std::unordered_map<std::string, std::string>> ExecutionHandler::getSelectedRows(std::unordered_map<std::string, Predicate> conditions) {
+std::pair<std::vector<std::unordered_map<std::string, std::string>>, std::vector<std::unordered_map<std::string, std::string>>> ExecutionHandler::getSelectedAndUnselectedRows(std::unordered_map<std::string, Predicate> conditions) {
     std::unordered_map<std::string, std::string> verifyRow = this->table[0];
 
     for (auto headerValuePair : conditions) {
@@ -22,8 +22,10 @@ std::vector<std::unordered_map<std::string, std::string>> ExecutionHandler::getS
     }
 
     std::vector<std::unordered_map<std::string, std::string>> selectedRows;
+    std::vector<std::unordered_map<std::string, std::string>> unSelectedRows;
 
     for (auto row : this->table) {
+        bool didSelectRow = false;
         for (auto headerValuePair : row) {
             std::string header = headerValuePair.first;
             if (conditions.find(header) != conditions.end()) {
@@ -33,33 +35,42 @@ std::vector<std::unordered_map<std::string, std::string>> ExecutionHandler::getS
 
                 if (op == Operator::EQUAL && tableValue == conditionsValue) {
                     selectedRows.push_back(row);
+                    didSelectRow = true;
                     break;
                 }
                 else if (op == Operator::NOT_EQUAL && tableValue != conditionsValue) {
                     selectedRows.push_back(row);
+                    didSelectRow = true;
                     break;
                 }
                 else if (op == Operator::LESS_THAN && tableValue < conditionsValue) {
                     selectedRows.push_back(row);
+                    didSelectRow = true;
                     break;
                 }
                 else if (op == Operator::GREATER_THAN && tableValue > conditionsValue) {
                     selectedRows.push_back(row);
+                    didSelectRow = true;
                     break;
                 }
                 else if (op == Operator::LESS_EQUAL && tableValue <= conditionsValue) {
                     selectedRows.push_back(row);
+                    didSelectRow = true;
                     break;
                 }
                 else if (op == Operator::GREATER_EQUAL && tableValue >= conditionsValue) {
                     selectedRows.push_back(row);
+                    didSelectRow = true;
                     break;
                 }
+            }
+            if (!didSelectRow) {
+                unSelectedRows.push_back(row);
             }
         }
     }
 
-    return selectedRows;
+    return std::make_pair(selectedRows, unSelectedRows);
 }
 
 void ExecutionHandler::verifyStatementHeaders(std::unordered_map<std::string, std::string> statements) {
@@ -94,7 +105,8 @@ void ExecutionHandler::drop(std::string tableName) {
     std::string path = "tables/" + tableName + ".csv";
     
     if (std::remove(path.c_str()) != 0) {
-        // Throw error here.
+        std::string message = "ERROR DROPPING FILE " + path + ";";
+        throw FileError(message);
     }
 }
 
@@ -115,7 +127,7 @@ void ExecutionHandler::insert(std::unordered_map<std::string, std::string> state
 
 void ExecutionHandler::select(std::unordered_map<std::string, Predicate> conditions) {
 
-    std::vector<std::unordered_map<std::string, std::string>> selectedRows = getSelectedRows(conditions);
+    std::vector<std::unordered_map<std::string, std::string>> selectedRows = getSelectedAndUnselectedRows(conditions).first;
 
     std::string csvString = csvParser.toCsvString(selectedRows);
 
@@ -131,16 +143,16 @@ void ExecutionHandler::selectAll() {
 
 void ExecutionHandler::delete_(std::unordered_map<std::string, Predicate> conditions) {
     
-    std::vector<std::unordered_map<std::string, std::string>> selectedRows = getSelectedRows(conditions);
+    std::vector<std::unordered_map<std::string, std::string>> selectedRows = getSelectedAndUnselectedRows(conditions).first;
 
     // Overwrite table here.
 }
 
 void ExecutionHandler::update(std::unordered_map<std::string, Predicate> conditions, std::unordered_map<std::string, std::string> statements) {
     
-    std::vector<std::unordered_map<std::string, std::string>> selectedRows = getSelectedRows(conditions);
-
-    // Get unSelectedRows here, may make a new function to not loop through everything again.
+    auto rows = getSelectedAndUnselectedRows(conditions);
+    std::vector<std::unordered_map<std::string, std::string>> selectedRows = rows.first;
+    std::vector<std::unordered_map<std::string, std::string>> unSelectedRows = rows.second;
 
     updateRows(selectedRows, statements);
 
