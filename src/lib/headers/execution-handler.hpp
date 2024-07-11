@@ -3,6 +3,7 @@
 
 #include "csv-parser.hpp"
 #include "expressions.hpp"
+#include "file-handler.hpp"
 #include "errors.hpp"
 
 #include <string>
@@ -14,6 +15,7 @@
 class ExecutionHandler {
     private:
         CSVParser csvParser;
+        FileHandler fileHandler;
         std::string activeTable;
         std::vector<std::unordered_map<std::string, std::string>> table;
         std::pair<std::vector<std::unordered_map<std::string, std::string>>, std::vector<std::unordered_map<std::string, std::string>>> getSelectedAndUnselectedRows(std::unordered_map<std::string, Predicate> conditions);

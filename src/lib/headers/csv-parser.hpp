@@ -19,6 +19,9 @@ class CSVParser {
         std::vector<std::string> getHeaders();
         std::vector<std::unordered_map<std::string, std::string>> loadTable(std::string tableName);
         std::string toCsvString(std::vector<std::unordered_map<std::string, std::string>> table);
+        std::string getColumnSeperatedStringFromRows(std::vector<std::unordered_map<std::string, std::string>> rows);
+        std::string getColumnSeperatedStringFromHeaders(std::vector<std::string> headers);
+        std::string getColumnSeperatedStringFromHeaders();
 };
 
 #endif

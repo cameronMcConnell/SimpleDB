@@ -50,21 +50,16 @@ std::vector<std::unordered_map<std::string, std::string>> CSVParser::loadTable(s
 }
 
 std::string CSVParser::toCsvString(std::vector<std::unordered_map<std::string, std::string>> table) {
-    std::string csvString;
-    
+    std::string csHeaders = getColumnSeperatedStringFromHeaders();
+    std::string csRows = getColumnSeperatedStringFromRows(table);
+    std::string csvString = csHeaders + csRows;
+
+    return csvString;
+}
+
+std::string CSVParser::getColumnSeperatedStringFromRows(std::vector<std::unordered_map<std::string, std::string>> rows) {
     std::ostringstream oss;
-    for (size_t i = 0; i < this->headers.size(); ++i) {
-        if (i != 0) {
-            oss << ",";
-        }
-        oss << this->headers[i];
-    }
-
-    oss << "\n";
-    csvString += oss.str();
-    oss.str("");
-
-    for (std::unordered_map<std::string, std::string> row : table) {
+    for (std::unordered_map<std::string, std::string> row : rows) {
         for (size_t i = 0; i < this->headers.size(); ++i) {
             std::string header = this->headers[i];
             if (i != 0) {
@@ -74,9 +69,32 @@ std::string CSVParser::toCsvString(std::vector<std::unordered_map<std::string, s
         }
 
         oss << "\n";
-        csvString += oss.str();
-        oss.str("");
+        return oss.str();
+    }
+}
+
+std::string CSVParser::getColumnSeperatedStringFromHeaders() {    
+    std::ostringstream oss;
+    for (size_t i = 0; i < this->headers.size(); ++i) {
+        if (i != 0) {
+            oss << ",";
+        }
+        oss << this->headers[i];
     }
 
-    return csvString;
+    oss << "\n";
+    return oss.str();
+}
+
+std::string CSVParser::getColumnSeperatedStringFromHeaders(std::vector<std::string> headers) {    
+    std::ostringstream oss;
+    for (size_t i = 0; i < headers.size(); ++i) {
+        if (i != 0) {
+            oss << ",";
+        }
+        oss << headers[i];
+    }
+
+    oss << "\n";
+    return oss.str();
 }

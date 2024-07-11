@@ -2,6 +2,7 @@
 
 ExecutionHandler::ExecutionHandler() {
     this->csvParser = CSVParser();
+    this->fileHandler = FileHandler();
     this->activeTable = "root";
 }
 
@@ -98,16 +99,18 @@ void ExecutionHandler::updateRows(std::vector<std::unordered_map<std::string, st
 }
 
 void ExecutionHandler::create(std::string tableName, std::vector<std::string> headers) {
-    // Figure this out.
+    
+    std::string csHeaders = csvParser.getColumnSeperatedStringFromHeaders(headers);
+
+    std::string path = "table/" + tableName + ".csv";
+
+    fileHandler.writeTable(path, csHeaders);
 }
 
 void ExecutionHandler::drop(std::string tableName) {
     std::string path = "tables/" + tableName + ".csv";
     
-    if (std::remove(path.c_str()) != 0) {
-        std::string message = "ERROR DROPPING FILE " + path + ";";
-        throw FileError(message);
-    }
+    fileHandler.removeTable(path);
 }
 
 void ExecutionHandler::use(std::string tableName) {
@@ -122,7 +125,9 @@ void ExecutionHandler::insert(std::unordered_map<std::string, std::string> state
     
     std::string csvString = csvParser.toCsvString(this->table);
 
-    // Append to table here.
+    std::string path = "tables/" + this->activeTable + ".csv";
+
+    fileHandler.writeTable(path, csvString);
 }
 
 void ExecutionHandler::select(std::unordered_map<std::string, Predicate> conditions) {
@@ -135,7 +140,7 @@ void ExecutionHandler::select(std::unordered_map<std::string, Predicate> conditi
 }
 
 void ExecutionHandler::selectAll() {
-    
+
     std::string csvString = csvParser.toCsvString(this->table);
 
     // Do suff with string here.
@@ -143,9 +148,13 @@ void ExecutionHandler::selectAll() {
 
 void ExecutionHandler::delete_(std::unordered_map<std::string, Predicate> conditions) {
     
-    std::vector<std::unordered_map<std::string, std::string>> selectedRows = getSelectedAndUnselectedRows(conditions).first;
+    std::vector<std::unordered_map<std::string, std::string>> unSelectedRows = getSelectedAndUnselectedRows(conditions).second;
 
-    // Overwrite table here.
+    std::string csvString = csvParser.toCsvString(unSelectedRows);
+
+    std::string path = "tables/" + this->activeTable + ".csv";
+
+    fileHandler.writeTable(path, csvString);
 }
 
 void ExecutionHandler::update(std::unordered_map<std::string, Predicate> conditions, std::unordered_map<std::string, std::string> statements) {
@@ -156,10 +165,20 @@ void ExecutionHandler::update(std::unordered_map<std::string, Predicate> conditi
 
     updateRows(selectedRows, statements);
 
-    // Overwrite table here.
+    // I hate this code, omg it is gross. I'm sorry if you are trying to understand this lol.
+    std::string csHeaders = csvParser.getColumnSeperatedStringFromHeaders();
+    std::string csSelectedRows = csvParser.getColumnSeperatedStringFromRows(selectedRows);
+    std::string csUnSelectedRows = csvParser.getColumnSeperatedStringFromRows(unSelectedRows);
+    std::string csvString = csHeaders + csSelectedRows + csUnSelectedRows;
+
+    std::string path = "tables/" + this->activeTable + ".csv";
+
+    fileHandler.writeTable(path, csvString);
 }
 
 void ExecutionHandler::updateAll(std::unordered_map<std::string, std::string> statements) {
     
     updateRows(this->table, statements);
+
+    std::string csvString = csvParser.toCsvString(this->table);
 }
