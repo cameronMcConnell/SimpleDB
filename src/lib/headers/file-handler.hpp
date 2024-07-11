@@ -1,12 +1,11 @@
 #ifndef FILE_HANDLER
 #define FILE_HANDLER
 
-#include "headers/errors.hpp"
+#include "errors.hpp"
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
-#include <cstdio>
 #include <sys/stat.h>
 #include <sys/types.h>
 

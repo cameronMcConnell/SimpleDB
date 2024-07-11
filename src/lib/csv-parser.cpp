@@ -69,8 +69,9 @@ std::string CSVParser::getColumnSeperatedStringFromRows(std::vector<std::unorder
         }
 
         oss << "\n";
-        return oss.str();
     }
+    
+    return oss.str();
 }
 
 std::string CSVParser::getColumnSeperatedStringFromHeaders() {    
