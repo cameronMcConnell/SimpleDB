@@ -31,41 +31,39 @@ std::pair<std::vector<std::unordered_map<std::string, std::string>>, std::vector
         bool didSelectRow = false;
         for (auto headerValuePair : row) {
             std::string header = headerValuePair.first;
-            if (conditions.find(header) != conditions.end()) {
-                Operator op = conditions[header].op;
-                std::string conditionsValue = conditions[header].value;
-                std::string tableValue = row[header];
+            Operator op = conditions[header].op;
+            std::string conditionsValue = conditions[header].value;
+            std::string tableValue = row[header];
 
-                if (op == Operator::EQUAL && tableValue == conditionsValue) {
-                    selectedRows.push_back(row);
-                    didSelectRow = true;
-                    break;
-                }
-                else if (op == Operator::NOT_EQUAL && tableValue != conditionsValue) {
-                    selectedRows.push_back(row);
-                    didSelectRow = true;
-                    break;
-                }
-                else if (op == Operator::LESS_THAN && tableValue < conditionsValue) {
-                    selectedRows.push_back(row);
-                    didSelectRow = true;
-                    break;
-                }
-                else if (op == Operator::GREATER_THAN && tableValue > conditionsValue) {
-                    selectedRows.push_back(row);
-                    didSelectRow = true;
-                    break;
-                }
-                else if (op == Operator::LESS_EQUAL && tableValue <= conditionsValue) {
-                    selectedRows.push_back(row);
-                    didSelectRow = true;
-                    break;
-                }
-                else if (op == Operator::GREATER_EQUAL && tableValue >= conditionsValue) {
-                    selectedRows.push_back(row);
-                    didSelectRow = true;
-                    break;
-                }
+            if (op == Operator::EQUAL && tableValue == conditionsValue) {
+                selectedRows.push_back(row);
+                didSelectRow = true;
+                break;
+            }
+            else if (op == Operator::NOT_EQUAL && tableValue != conditionsValue) {
+                selectedRows.push_back(row);
+                didSelectRow = true;
+                break;
+            }
+            else if (op == Operator::LESS_THAN && tableValue < conditionsValue) {
+                selectedRows.push_back(row);
+                didSelectRow = true;
+                break;
+            }
+            else if (op == Operator::GREATER_THAN && tableValue > conditionsValue) {
+                selectedRows.push_back(row);
+                didSelectRow = true;
+                break;
+            }
+            else if (op == Operator::LESS_EQUAL && tableValue <= conditionsValue) {
+                selectedRows.push_back(row);
+                didSelectRow = true;
+                break;
+            }
+            else if (op == Operator::GREATER_EQUAL && tableValue >= conditionsValue) {
+                selectedRows.push_back(row);
+                didSelectRow = true;
+                break;
             }
             if (!didSelectRow) {
                 unSelectedRows.push_back(row);

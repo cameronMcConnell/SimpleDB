@@ -52,7 +52,7 @@ std::unordered_map<std::string, Predicate> CommandParser::parseCondtions(std::st
             }
 
             conditionsMap[columnName] = {op, value};
-            iter++;
+            ++iter;
         }
 
         return conditionsMap;
