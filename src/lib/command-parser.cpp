@@ -36,9 +36,9 @@ Operator CommandParser::stringToOperator(std::string opStr) {
 
 std::unordered_map<std::string, Predicate> CommandParser::parseCondtions(std::string conditions) {
         std::unordered_map<std::string, Predicate> conditionsMap;
-        std::regex conditionRegex(R"((\w+)(==|!=|<|>|<=|>=)([^,]+),)");
+        std::regex conditionRegex(R"((\w+)(==|!=|<|>|<=|>=)(\w+)(?:,|$))");
         std::sregex_iterator iter(conditions.begin(), conditions.end(), conditionRegex);
-        std::sregex_iterator end;
+        std::sregex_iterator end = std::sregex_iterator();
 
         while (iter != end) {
             std::smatch match = *iter;
