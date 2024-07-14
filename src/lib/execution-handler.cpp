@@ -8,7 +8,9 @@ ExecutionHandler::ExecutionHandler() {
 
 void ExecutionHandler::setActiveTable(std::string activeTable) {
     this->activeTable = activeTable;
-    this->table = csvParser.loadTable(activeTable);
+    if (activeTable != "root") {
+        this->table = csvParser.loadTable(activeTable);
+    }
 }
 
 std::pair<std::vector<std::unordered_map<std::string, std::string>>, std::vector<std::unordered_map<std::string, std::string>>> ExecutionHandler::getSelectedAndUnselectedRows(std::unordered_map<std::string, Predicate> conditions) {
@@ -75,11 +77,12 @@ std::pair<std::vector<std::unordered_map<std::string, std::string>>, std::vector
 }
 
 void ExecutionHandler::verifyStatementHeaders(std::unordered_map<std::string, std::string> statements) {
-    std::unordered_map<std::string, std::string> verifyRow = this->table[0];
+    std::vector<std::string> headers = this->csvParser.getHeaders();
+    std::set<std::string> headerSet(headers.begin(), headers.end());
 
     for (auto headerValuePair : statements) {
         std::string header = headerValuePair.first;
-        if (verifyRow.find(header) == verifyRow.end()) {
+        if (headerSet.find(header) == headerSet.end()) {
             std::string message = "SYNTAX ERROR; HEADER " + header + " IS NOT PRESENT IN TABLE " + this->activeTable + ";";
             throw SyntaxError(message);
         }

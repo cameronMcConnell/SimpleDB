@@ -10,13 +10,13 @@ std::vector<std::unordered_map<std::string, std::string>> CSVParser::loadTable(s
 
     std::vector<std::unordered_map<std::string, std::string>> table;
     std::vector<std::string> headers;
-    const char delimeter = ' ';
     bool readingHeader = true;
     std::string line;
 
     if (csvFile.is_open()) {
         while (std::getline(csvFile, line)) {
             if (readingHeader) {
+                const char delimeter = ',';
                 readingHeader = false;
                 std::string header;
                 std::istringstream iss(line);
@@ -29,6 +29,7 @@ std::vector<std::unordered_map<std::string, std::string>> CSVParser::loadTable(s
             }
             else {
                 std::unordered_map<std::string, std::string> newRow;
+                const char delimeter = ' ';
                 std::string value;
                 int headerIndex = 0;
                 std::istringstream iss(line);
@@ -42,7 +43,7 @@ std::vector<std::unordered_map<std::string, std::string>> CSVParser::loadTable(s
             }
         }
     } else {
-        std::string message = "ERROR OPENING FILE " + fileName + ";";
+        std::string message = "FILE ERROR; ERROR OPENING FILE " + fileName + ";";
         throw FileError(message);
     }
 

@@ -23,7 +23,7 @@ void FileHandler::writeTable(std::string path, std::string csvString) {
 
 void FileHandler::removeTable(std::string path) {
     if (std::remove(path.c_str()) != 0) {
-        std::string message = "ERROR DROPPING FILE " + path + ";";
+        std::string message = "FILE ERROR; ERROR DROPPING FILE " + path + ";";
         throw FileError(message);
     }
 }
