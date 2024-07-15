@@ -13,7 +13,13 @@ void ExecutionHandler::setActiveTable(std::string activeTable) {
     }
 }
 
-std::pair<std::vector<std::unordered_map<std::string, std::string>>, std::vector<std::unordered_map<std::string, std::string>>> ExecutionHandler::getSelectedAndUnselectedRows(std::unordered_map<std::string, Predicate> conditions) {
+void ExecutionHandler::combineRows(std::vector<std::unordered_map<std::string, std::string>> &rows1, std::vector<std::unordered_map<std::string, std::string>> rows2) {
+    for (auto row : rows2) {
+        rows1.push_back(row);
+    }
+}
+
+std::pair<std::vector<std::unordered_map<std::string, std::string>>, std::vector<std::unordered_map<std::string, std::string>>> ExecutionHandler::getSelectedAndUnselectedRows(std::unordered_map<std::string, std::vector<Predicate>> conditions) {
     std::unordered_map<std::string, std::string> verifyRow = this->table[0];
 
     for (auto headerValuePair : conditions) {
@@ -31,42 +37,44 @@ std::pair<std::vector<std::unordered_map<std::string, std::string>>, std::vector
         bool didSelectRow = false;
         for (auto headerValuePair : row) {
             std::string header = headerValuePair.first;
-            Operator op = conditions[header].op;
-            std::string conditionsValue = conditions[header].value;
-            std::string tableValue = row[header];
+            for (Predicate pred : conditions[header]) {
+                Operator op = pred.op;
+                std::string conditionsValue = pred.value;
+                std::string tableValue = headerValuePair.second;
 
-            if (op == Operator::EQUAL && tableValue == conditionsValue) {
-                selectedRows.push_back(row);
-                didSelectRow = true;
-                break;
-            }
-            else if (op == Operator::NOT_EQUAL && tableValue != conditionsValue) {
-                selectedRows.push_back(row);
-                didSelectRow = true;
-                break;
-            }
-            else if (op == Operator::LESS_THAN && tableValue < conditionsValue) {
-                selectedRows.push_back(row);
-                didSelectRow = true;
-                break;
-            }
-            else if (op == Operator::GREATER_THAN && tableValue > conditionsValue) {
-                selectedRows.push_back(row);
-                didSelectRow = true;
-                break;
-            }
-            else if (op == Operator::LESS_EQUAL && tableValue <= conditionsValue) {
-                selectedRows.push_back(row);
-                didSelectRow = true;
-                break;
-            }
-            else if (op == Operator::GREATER_EQUAL && tableValue >= conditionsValue) {
-                selectedRows.push_back(row);
-                didSelectRow = true;
-                break;
+                if (op == Operator::EQUAL && tableValue == conditionsValue) {
+                    selectedRows.push_back(row);
+                    didSelectRow = true;
+                    break;
+                }
+                else if (op == Operator::NOT_EQUAL && tableValue != conditionsValue) {
+                    selectedRows.push_back(row);
+                    didSelectRow = true;
+                    break;
+                }
+                else if (op == Operator::LESS_THAN && tableValue < conditionsValue) {
+                    selectedRows.push_back(row);
+                    didSelectRow = true;
+                    break;
+                }
+                else if (op == Operator::GREATER_THAN && tableValue > conditionsValue) {
+                    selectedRows.push_back(row);
+                    didSelectRow = true;
+                    break;
+                }
+                else if (op == Operator::LESS_EQUAL && tableValue <= conditionsValue) {
+                    selectedRows.push_back(row);
+                    didSelectRow = true;
+                    break;
+                }
+                else if (op == Operator::GREATER_EQUAL && tableValue >= conditionsValue) {
+                    selectedRows.push_back(row);
+                    didSelectRow = true;
+                    break;
+                }
             }
             if (!didSelectRow) {
-                unSelectedRows.push_back(row);
+                    unSelectedRows.push_back(row);
             }
         }
     }
@@ -131,7 +139,7 @@ void ExecutionHandler::insert(std::unordered_map<std::string, std::string> state
     this->fileHandler.writeTable(path, csvString);
 }
 
-void ExecutionHandler::select(std::unordered_map<std::string, Predicate> conditions) {
+void ExecutionHandler::select(std::unordered_map<std::string, std::vector<Predicate>> conditions) {
 
     std::vector<std::unordered_map<std::string, std::string>> selectedRows = getSelectedAndUnselectedRows(conditions).first;
 
@@ -147,9 +155,11 @@ void ExecutionHandler::selectAll() {
     // Do suff with string here.
 }
 
-void ExecutionHandler::delete_(std::unordered_map<std::string, Predicate> conditions) {
+void ExecutionHandler::delete_(std::unordered_map<std::string, std::vector<Predicate>> conditions) {
     
     std::vector<std::unordered_map<std::string, std::string>> unSelectedRows = getSelectedAndUnselectedRows(conditions).second;
+
+    this->table = unSelectedRows;
 
     std::string csvString = this->csvParser.toCsvString(unSelectedRows);
 
@@ -158,13 +168,17 @@ void ExecutionHandler::delete_(std::unordered_map<std::string, Predicate> condit
     this->fileHandler.writeTable(path, csvString);
 }
 
-void ExecutionHandler::update(std::unordered_map<std::string, Predicate> conditions, std::unordered_map<std::string, std::string> statements) {
+void ExecutionHandler::update(std::unordered_map<std::string, std::vector<Predicate>> conditions, std::unordered_map<std::string, std::string> statements) {
     
     auto rows = getSelectedAndUnselectedRows(conditions);
     std::vector<std::unordered_map<std::string, std::string>> selectedRows = rows.first;
     std::vector<std::unordered_map<std::string, std::string>> unSelectedRows = rows.second;
 
     updateRows(selectedRows, statements);
+
+    combineRows(selectedRows, unSelectedRows);
+
+    this->table = selectedRows;
 
     // I hate this code, omg it is gross. I'm sorry if you are trying to understand this lol.
     std::string csHeaders = this->csvParser.getColumnSeperatedStringFromHeaders();

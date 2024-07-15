@@ -34,8 +34,8 @@ Operator CommandParser::stringToOperator(std::string opStr) {
     return Operator::INVALID;
 }
 
-std::unordered_map<std::string, Predicate> CommandParser::parseCondtions(std::string conditions) {
-        std::unordered_map<std::string, Predicate> conditionsMap;
+std::unordered_map<std::string, std::vector<Predicate>> CommandParser::parseCondtions(std::string conditions) {
+        std::unordered_map<std::string, std::vector<Predicate>> conditionsMap;
         std::regex conditionRegex(R"((\w+)(==|!=|<|>|<=|>=)(\w+)(?:,|$))");
         std::sregex_iterator iter(conditions.begin(), conditions.end(), conditionRegex);
         std::sregex_iterator end = std::sregex_iterator();
@@ -51,7 +51,7 @@ std::unordered_map<std::string, Predicate> CommandParser::parseCondtions(std::st
                 throw SyntaxError("SYNTAX ERROR; OPERATOR IS INVALID;");
             }
 
-            conditionsMap[columnName] = {op, value};
+            conditionsMap[columnName].push_back({op, value});
             ++iter;
         }
 
@@ -204,7 +204,7 @@ void CommandParser::parseSelect(std::vector<std::string> tokens) {
         executionHandler.selectAll();
     }
     else {
-        std::unordered_map<std::string, Predicate> conditions = parseCondtions(tokens[1]);
+        std::unordered_map<std::string, std::vector<Predicate>> conditions = parseCondtions(tokens[1]);
 
         executionHandler.select(conditions);
     }
@@ -221,7 +221,7 @@ void CommandParser::parseInsert(std::vector<std::string> tokens) {
 }
 
 void CommandParser::parseDelete(std::vector<std::string> tokens) {
-    std::unordered_map<std::string, Predicate> conditions = parseCondtions(tokens[1]);
+    std::unordered_map<std::string, std::vector<Predicate>> conditions = parseCondtions(tokens[1]);
 
     executionHandler.delete_(conditions);
 
@@ -239,7 +239,7 @@ void CommandParser::parseUpdate(std::vector<std::string> tokens) {
         executionHandler.updateAll(statements);
     }
     else {
-        std::unordered_map<std::string, Predicate> conditions = parseCondtions(tokens[1]);
+        std::unordered_map<std::string, std::vector<Predicate>> conditions = parseCondtions(tokens[1]);
 
         std::unordered_map<std::string, std::string> statements = parseStatements(tokens[3]);
 
