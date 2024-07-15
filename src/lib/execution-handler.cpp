@@ -98,7 +98,7 @@ void ExecutionHandler::verifyStatementHeaders(std::unordered_map<std::string, st
 void ExecutionHandler::updateRows(std::vector<std::unordered_map<std::string, std::string>> &rows, std::unordered_map<std::string, std::string> statements) {
     verifyStatementHeaders(statements);
 
-    for (std::unordered_map<std::string, std::string> row : rows) {
+    for (std::unordered_map<std::string, std::string> &row : rows) {
         for (auto headerValuePair : statements) {
             std::string header = headerValuePair.first;
             std::string value = headerValuePair.second;
@@ -180,11 +180,7 @@ void ExecutionHandler::update(std::unordered_map<std::string, std::vector<Predic
 
     this->table = selectedRows;
 
-    // I hate this code, omg it is gross. I'm sorry if you are trying to understand this lol.
-    std::string csHeaders = this->csvParser.getColumnSeperatedStringFromHeaders();
-    std::string csSelectedRows = this->csvParser.getColumnSeperatedStringFromRows(selectedRows);
-    std::string csUnSelectedRows = this->csvParser.getColumnSeperatedStringFromRows(unSelectedRows);
-    std::string csvString = csHeaders + csSelectedRows + csUnSelectedRows;
+    std::string csvString = csvParser.toCsvString(this->table);
 
     std::string path = "tables/" + this->activeTable + ".csv";
 
@@ -196,4 +192,8 @@ void ExecutionHandler::updateAll(std::unordered_map<std::string, std::string> st
     updateRows(this->table, statements);
 
     std::string csvString = this->csvParser.toCsvString(this->table);
+
+    std::string path = "tables/" + this->activeTable + ".csv";
+
+    this->fileHandler.writeTable(path, csvString);
 }
