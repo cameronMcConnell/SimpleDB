@@ -60,16 +60,19 @@ std::string CSVParser::toCsvString(std::vector<std::unordered_map<std::string, s
 
 std::string CSVParser::getColumnSeperatedStringFromRows(std::vector<std::unordered_map<std::string, std::string>> rows) {
     std::ostringstream oss;
-    for (std::unordered_map<std::string, std::string> row : rows) {
-        for (size_t i = 0; i < this->headers.size(); ++i) {
-            std::string header = this->headers[i];
-            if (i != 0) {
+    
+    for (size_t i = 0; i < rows.size(); ++i) {
+        std::unordered_map<std::string, std::string> row = rows[i];
+        for (size_t j = 0; j < this->headers.size(); ++j) {
+            std::string header = this->headers[j];
+            if (j != 0 && j != this->headers.size() - 1) {
                 oss << ",";
             }
             oss << row[header];
         }
-
-        oss << "\n";
+        if (i != rows.size() - 1) {
+            oss << "\n";
+        }
     }
     
     return oss.str();
@@ -77,6 +80,7 @@ std::string CSVParser::getColumnSeperatedStringFromRows(std::vector<std::unorder
 
 std::string CSVParser::getColumnSeperatedStringFromHeaders() {    
     std::ostringstream oss;
+    
     for (size_t i = 0; i < this->headers.size(); ++i) {
         if (i != 0) {
             oss << ",";
@@ -90,6 +94,7 @@ std::string CSVParser::getColumnSeperatedStringFromHeaders() {
 
 std::string CSVParser::getColumnSeperatedStringFromHeaders(std::vector<std::string> headers) {    
     std::ostringstream oss;
+    
     for (size_t i = 0; i < headers.size(); ++i) {
         if (i != 0) {
             oss << ",";
