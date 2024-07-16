@@ -11,11 +11,11 @@ SocketInputHandler::SocketInputHandler(int portNumber) {
 }
 
 std::string SocketInputHandler::getInput() {
-    char buffer[200];
+    char buffer[400];
     
     ssize_t bytesReceived = recv(clientSocket, buffer, sizeof(buffer), 0);
     if (bytesReceived == -1) {
-        std::cerr << "ERROR RECEIVING DATA FROM CLIENT" << std::endl;
+        throw SocketError("ERROR RECEIVING DATA FROM CLIENT");
         return "";
     }
     
@@ -49,6 +49,8 @@ void SocketInputHandler::openSocket() {
         throw SocketError("ERROR LISTENING ON SOCKET");
     }
 
+    std::cout << "SOCKET OPEN ON PORT: " << portNumber << "; AWAITING CONNECTION FROM CLIENT;" << std::endl;
+
     // Accept only one client connection
     this->clientSocket = accept(this->serverSocket, nullptr, nullptr);
     if (this->clientSocket == -1) {
@@ -56,6 +58,10 @@ void SocketInputHandler::openSocket() {
     }
 
     std::cout << "SOCKET ACCEPTING MESSAGES ON PORT: " << portNumber << std::endl;
+}
+
+void SocketInputHandler::sendOutput(std::string output) {
+    send(this->serverSocket, output.c_str(), output.size(), 0);
 }
 
 void SocketInputHandler::closeSocket() {

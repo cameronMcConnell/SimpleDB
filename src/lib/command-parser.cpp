@@ -118,50 +118,51 @@ void CommandParser::ensureActiveTable() {
     }
 }
 
-void CommandParser::parseCommand(std::string command) {
+std::string CommandParser::parseCommand(std::string command) {
     std::vector<std::string> tokens = tokenize(command);
 
     if (tokens.empty()) {
-        std::cout << "SYNTAX ERROR; NO COMMAND SUPPLIED;" << std::endl;
+        throw SyntaxError("SYNTAX ERROR; NO COMMAND SUPPLIED;");
     }
     else if (tokens[0] == "CREATE") {
         checkForValidSize(tokens, 4);
-        parseCreate(tokens);
+        return parseCreate(tokens);
     }
     else if (tokens[0] == "DROP") {
         checkForValidSize(tokens, 2);
-        parseDrop(tokens);
+        return parseDrop(tokens);
     }
     else if (tokens[0] == "USE") {
         checkForValidSize(tokens, 2);
-        parseUse(tokens);
+        return parseUse(tokens);
     }
     else if (tokens[0] == "SELECT") {
         ensureActiveTable();
         checkForValidSize(tokens, 2);
-        parseSelect(tokens);
+        return parseSelect(tokens);
     }
     else if (tokens[0] == "INSERT") {
         ensureActiveTable();
         checkForValidSize(tokens, 2);
-        parseInsert(tokens);
+        return parseInsert(tokens);
     }
     else if (tokens[0] == "DELETE") {
         ensureActiveTable();
         checkForValidSize(tokens, 2);
-        parseDelete(tokens);
+        return parseDelete(tokens);
     }
     else if (tokens[0] == "UPDATE") {
         ensureActiveTable();
         checkForValidSize(tokens, 4);
-        parseUpdate(tokens);
+        return parseUpdate(tokens);
     }
     else {
-        std::cout << "SYNTAX ERROR; INVALID TOKEN: " << tokens[0] << ";" << std::endl; 
+        std::string message = "SYNTAX ERROR; INVALID TOKEN: " + tokens[0] + ";";
+        throw SyntaxError(message); 
     }
 }
 
-void CommandParser::parseCreate(std::vector<std::string> tokens) {
+std::string CommandParser::parseCreate(std::vector<std::string> tokens) {
     std::string tableName = tokens[1];
 
     if (tokens[2] != "WITH") {
@@ -172,10 +173,11 @@ void CommandParser::parseCreate(std::vector<std::string> tokens) {
 
     executionHandler.create(tableName, headers);
 
-    std::cout << "SUCCESS IN CREATING TABLE: " << tableName << ";" << std::endl;
+    std::string result = "SUCCESS IN CREATING TABLE: " + tableName + ";";
+    return result;
 }
 
-void CommandParser::parseDrop(std::vector<std::string> tokens) {
+std::string CommandParser::parseDrop(std::vector<std::string> tokens) {
     std::string tableName = tokens[1];
 
     executionHandler.drop(tableName);
@@ -185,10 +187,11 @@ void CommandParser::parseDrop(std::vector<std::string> tokens) {
         executionHandler.setActiveTable("root");
     }
 
-    std::cout << "SUCCESS IN DROPPING TABLE: " << tableName << ";" << std::endl;
+    std::string result = "SUCCESS IN DROPPING TABLE: " + tableName + ";";
+    return result;
 }
 
-void CommandParser::parseUse(std::vector<std::string> tokens) {
+std::string CommandParser::parseUse(std::vector<std::string> tokens) {
     std::string tableName = tokens[1];
 
     executionHandler.use(tableName);
@@ -196,39 +199,41 @@ void CommandParser::parseUse(std::vector<std::string> tokens) {
     this->activeTable = tableName;
     executionHandler.setActiveTable(tableName);
 
-    std::cout << "SUCCESS IN USING TABLE: " << tableName << ";" << std::endl;
+
+    std::string result = "SUCCESS IN USING TABLE: " + tableName + ";";
+    return result;
 }
 
-void CommandParser::parseSelect(std::vector<std::string> tokens) {
+std::string CommandParser::parseSelect(std::vector<std::string> tokens) {
     if (tokens[1] == "*") {
-        executionHandler.selectAll();
+        return executionHandler.selectAll();
     }
     else {
         std::unordered_map<std::string, std::vector<Predicate>> conditions = parseCondtions(tokens[1]);
 
-        executionHandler.select(conditions);
+        return executionHandler.select(conditions);
     }
-
-    std::cout << "SUCCESS IN SELECTING FROM TABLE: " << this->activeTable << ";" << std::endl;
 }
 
-void CommandParser::parseInsert(std::vector<std::string> tokens) {
+std::string CommandParser::parseInsert(std::vector<std::string> tokens) {
     std::unordered_map<std::string, std::string> statements = parseStatements(tokens[1]);
 
     executionHandler.insert(statements);
 
-    std::cout << "SUCCESS IN INSERTING ON TABLE: " << this->activeTable << ";" << std::endl;
+    std::string result = "SUCCESS IN INSERTING ON TABLE: " + this->activeTable + ";";
+    return result;
 }
 
-void CommandParser::parseDelete(std::vector<std::string> tokens) {
+std::string CommandParser::parseDelete(std::vector<std::string> tokens) {
     std::unordered_map<std::string, std::vector<Predicate>> conditions = parseCondtions(tokens[1]);
 
     executionHandler.delete_(conditions);
 
-    std::cout << "SUCCESS IN DELETING ON TABLE: " << this->activeTable << ";" << std::endl;
+    std::string result = "SUCCESS IN DELETING ON TABLE: " + this->activeTable + ";";
+    return result;
 }
 
-void CommandParser::parseUpdate(std::vector<std::string> tokens) {
+std::string CommandParser::parseUpdate(std::vector<std::string> tokens) {
     if (tokens[2] != "WITH") {
         throw SyntaxError("SYNTAX ERROR; WITH NOT INCLUDED;");
     }
@@ -246,5 +251,6 @@ void CommandParser::parseUpdate(std::vector<std::string> tokens) {
         executionHandler.update(conditions, statements);
     }
 
-    std::cout << "SUCCESS IN UPDATING ON TABLE: " << this->activeTable << ";" << std::endl;
+    std::string result = "SUCCESS IN UPDATING ON TABLE: " + this->activeTable + ";";
+    return result;
 }

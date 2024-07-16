@@ -52,10 +52,6 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    std::cout << "+-------------------------+\n";
-    std::cout << "| SimpleDB | VERSION: 1.0 |\n";
-    std::cout << "+-------------------------+" << std::endl;
-
     CommandParser commandParser = CommandParser();
 
     if (socketFlag) {
@@ -82,18 +78,26 @@ int main(int argc, char *argv[]) {
             }
 
             try {
-                commandParser.parseCommand(command);
+                std::string output = commandParser.parseCommand(command);
+                inputHandler.sendOutput(output);
             }
             catch (const SyntaxError& e) {
-                std::cout << e.what() << std::endl;
+                inputHandler.sendOutput(e.what());
             }
             catch (const FileError& e) {
-                std::cout << e.what() << std::endl;
+                inputHandler.sendOutput(e.what());
+            }
+            catch (const SocketError& e) {
+                inputHandler.sendOutput(e.what());
             }
         }
     }
     else {
         UserInputHandler inputHandler;
+
+        std::cout << "+-------------------------+\n";
+        std::cout << "| SimpleDB | VERSION: 1.0 |\n";
+        std::cout << "+-------------------------+" << std::endl;
         
         while (1) {
             std::cout << commandParser.getActiveTable() + "-> ";
@@ -105,7 +109,7 @@ int main(int argc, char *argv[]) {
             }
 
             try {
-                commandParser.parseCommand(command);
+                std::cout << commandParser.parseCommand(command) << std::endl;
             }
             catch (const SyntaxError& e) {
                 std::cout << e.what() << std::endl;

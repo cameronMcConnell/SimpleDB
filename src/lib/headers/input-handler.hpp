@@ -30,6 +30,7 @@ class SocketInputHandler : public InputHandler{
         std::string getInput();
         void closeSocket();
         void openSocket();
+        void sendOutput(std::string output);
 };
 
 #endif

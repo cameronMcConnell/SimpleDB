@@ -31,8 +31,8 @@ class ExecutionHandler {
         void drop(std::string tableName);
         void use(std::string tableName);
         void insert(std::unordered_map<std::string, std::string> statements);
-        void select(std::unordered_map<std::string, std::vector<Predicate>> conditions);
-        void selectAll();
+        std::string select(std::unordered_map<std::string, std::vector<Predicate>> conditions);
+        std::string selectAll();
         void delete_(std::unordered_map<std::string, std::vector<Predicate>> conditions);
         void update(std::unordered_map<std::string, std::vector<Predicate>> conditions, std::unordered_map<std::string, std::string> statements);
         void updateAll(std::unordered_map<std::string, std::string> statements);

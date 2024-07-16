@@ -23,17 +23,17 @@ class CommandParser {
         std::unordered_map<std::string, std::vector<Predicate>> parseCondtions(std::string conditions);
         std::unordered_map<std::string, std::string> parseStatements(std::string statements);
         std::vector<std::string> parseHeaders(std::string headers);
-        void parseCreate(std::vector<std::string> tokens);
-        void parseDrop(std::vector<std::string> tokens);
-        void parseUse(std::vector<std::string> tokens);
-        void parseSelect(std::vector<std::string> tokens);
-        void parseInsert(std::vector<std::string> tokens);
-        void parseDelete(std::vector<std::string> tokens);
-        void parseUpdate(std::vector<std::string> tokens);
+        std::string parseCreate(std::vector<std::string> tokens);
+        std::string parseDrop(std::vector<std::string> tokens);
+        std::string parseUse(std::vector<std::string> tokens);
+        std::string parseSelect(std::vector<std::string> tokens);
+        std::string parseInsert(std::vector<std::string> tokens);
+        std::string parseDelete(std::vector<std::string> tokens);
+        std::string parseUpdate(std::vector<std::string> tokens);
 
     public:
         CommandParser();
-        void parseCommand(std::string command);
+        std::string parseCommand(std::string command);
         std::string getActiveTable();
 };
 

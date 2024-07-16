@@ -139,20 +139,20 @@ void ExecutionHandler::insert(std::unordered_map<std::string, std::string> state
     this->fileHandler.writeTable(path, csvString);
 }
 
-void ExecutionHandler::select(std::unordered_map<std::string, std::vector<Predicate>> conditions) {
+std::string ExecutionHandler::select(std::unordered_map<std::string, std::vector<Predicate>> conditions) {
 
     std::vector<std::unordered_map<std::string, std::string>> selectedRows = getSelectedAndUnselectedRows(conditions).first;
 
     std::string csvString = this->csvParser.toCsvString(selectedRows);
 
-    // Do stuff with string here.
+    return csvString;
 }
 
-void ExecutionHandler::selectAll() {
+std::string ExecutionHandler::selectAll() {
 
     std::string csvString = this->csvParser.toCsvString(this->table);
 
-    // Do suff with string here.
+    return csvString;
 }
 
 void ExecutionHandler::delete_(std::unordered_map<std::string, std::vector<Predicate>> conditions) {
