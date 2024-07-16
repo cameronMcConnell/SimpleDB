@@ -16,8 +16,8 @@ The commands supported by SimpleDB follow this grammar:
 * CREATE <table_name> WITH <column_name, ...>
 * DROP <table_name>
 * USE <table_name>
-* QUIT: Exit the SimpleDB program.
-* SELECT <column_name [ == || != || < || > || >= || <= ] value, ... || *>
+* QUIT
+* SELECT <column_name[ == || != || < || > || >= || <= ]value, ... || *>
 * INSERT <column_name=val, ...>
 * DELETE <column_name[ == || != || < || > || >= || <= ]value, ...>
 * UPDATE <column_name[ == || != || < || > || >= || <= ]value, ... || *> WITH <column_name=value, ...>
