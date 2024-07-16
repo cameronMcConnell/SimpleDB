@@ -54,6 +54,10 @@ int main(int argc, char *argv[]) {
 
     CommandParser commandParser = CommandParser();
 
+    std::cout << "+-------------------------+\n";
+    std::cout << "| SimpleDB | VERSION: 1.0 |\n";
+    std::cout << "+-------------------------+" << std::endl;
+
     if (socketFlag) {
         SocketInputHandler inputHandler = SocketInputHandler(portNumber);
 
@@ -94,10 +98,6 @@ int main(int argc, char *argv[]) {
     }
     else {
         UserInputHandler inputHandler;
-
-        std::cout << "+-------------------------+\n";
-        std::cout << "| SimpleDB | VERSION: 1.0 |\n";
-        std::cout << "+-------------------------+" << std::endl;
         
         while (1) {
             std::cout << commandParser.getActiveTable() + "-> ";
