@@ -13,14 +13,14 @@ SimpleDB is a lightweight and easy-to-use Database Management System designed fo
 ## Command Grammar
 The commands supported by SimpleDB follow this grammar:
 
-* CREATE <table_name> WITH <column_name, ...>: Create a new table with specified columns.
-* DROP <table_name>: Delete a table from the database.
-* USE <table_name>: Set the active table for performing operations.
+* CREATE <table_name> WITH <column_name, ...>
+* DROP <table_name>
+* USE <table_name>
 * QUIT: Exit the SimpleDB program.
-* SELECT <column_name [ == || != || < || > || >= || <= ] value, ... || *>: Retrieve data from the active table based on conditions.
-* INSERT <column_name=val, ...>: Add a new row of data into the active table.
-* DELETE <column_name[ == || != || < || > || >= || <= ]value, ...>: Delete rows from the active table based on conditions.
-* UPDATE <column_name[ == || != || < || > || >= || <= ]value, ... || *> WITH <column_name=value, ...>: Update rows in the active table based on conditions. Conditions operate on OR.
+* SELECT <column_name [ == || != || < || > || >= || <= ] value, ... || *>
+* INSERT <column_name=val, ...>
+* DELETE <column_name[ == || != || < || > || >= || <= ]value, ...>
+* UPDATE <column_name[ == || != || < || > || >= || <= ]value, ... || *> WITH <column_name=value, ...>
 
 ## Usage
 
