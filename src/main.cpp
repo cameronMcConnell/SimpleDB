@@ -76,8 +76,8 @@ int main(int argc, char *argv[]) {
             }
 
             if (command == "QUIT"){
-                std::string output = "QUITTING PROGRAM;\n";
-                std::cout << output;
+                std::string output = "QUITTING PROGRAM;";
+                std::cout << output << std::endl;
                 inputHandler.sendOutput(output);
                 inputHandler.closeSocket();
                 return 0;
