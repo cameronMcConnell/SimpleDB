@@ -61,7 +61,7 @@ void SocketInputHandler::openSocket() {
 }
 
 void SocketInputHandler::sendOutput(std::string output) {
-    send(this->serverSocket, output.c_str(), output.size(), 0);
+    send(this->clientSocket, output.c_str(), output.size(), 0);
 }
 
 void SocketInputHandler::closeSocket() {
